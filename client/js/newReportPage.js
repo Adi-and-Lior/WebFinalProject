@@ -491,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }));
 
                     alert('הדיווח נשלח בהצלחה!');
-                    window.location.href = '/html/homePageCitizen.html';
+                    window.location.href = '/html/reportReceivedPage.html';
                 } else {
                     alert('Failed to submit report: ' + data.message);
                 }
