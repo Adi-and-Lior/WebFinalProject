@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const reportId = urlParams.get('id');   // מזהה MongoDB
+    const reportId = urlParams.get('id');  
 
     const reportsTitleElement = document.querySelector('.reports-title h2');
     const backArrow = document.querySelector('.back-arrow');
@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         'rejected': 'נדחה',
     };
 
+    // כתובת הבסיס של השרת - החלף לפי הצורך
+    const backendBaseUrl = 'https://webfinalproject-j4tc.onrender.com';
+
     try {
         const response = await fetch(`/api/reports/${reportId}`);
         if (!response.ok) {
@@ -30,7 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         document.getElementById('displayFaultType').textContent = report.faultType || 'לא ידוע';
 
-        // מיקום
         if (report.location) {
             let locationText = '';
             if (report.location.city)        locationText += report.location.city;
@@ -41,7 +43,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('displayLocation').textContent = 'לא הוזן מיקום';
         }
 
-        // תאריך ושעה
         if (report.timestamp) {
             const dateObj = new Date(report.timestamp);
             document.getElementById('displayDate').textContent =
@@ -53,13 +54,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('displayTime').textContent  = 'לא ידוע';
         }
 
-        // תיאור
         document.getElementById('displayDescription').textContent =
             report.faultDescription || 'אין תיאור.';
 
         const mediaContainer = document.getElementById('mediaContainer');
+        mediaContainer.innerHTML = '';  // ניקוי לפני הוספה
+
         if (report.media) {
-            const mediaUrl = `/uploads/${report.media}`;
+            const mediaUrl = `${backendBaseUrl}/uploads/${report.media}`;
             if (/\.(jpeg|jpg|gif|png)$/i.test(report.media)) {
                 const img = document.createElement('img');
                 img.src = mediaUrl;
@@ -75,17 +77,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 mediaContainer.textContent = 'קובץ מדיה לא נתמך.';
             }
+        } else {
+            mediaContainer.textContent = 'אין מדיה מצורפת.';
         }
 
         let normalizedStatus = (report.status || '').toLowerCase().replace(/_/g, '-');
-
         const statusHebrew = statusTranslations[normalizedStatus] || 'לא ידוע';
-
         const statusElement = document.getElementById('displayStatus');
         statusElement.textContent = statusHebrew;
 
         statusElement.classList.remove('status-paid', 'status-rejected', 'status-in-progress');
-
         if (normalizedStatus === 'completed') {
             statusElement.classList.add('status-paid');
         } else if (normalizedStatus === 'rejected') {
