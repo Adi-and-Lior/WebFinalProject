@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>דיווח בטוח - אזור אישי</title> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/style.css" />
+</head>
+<body class="Wrapper">
+    <section class="profile-container">
+        <header class="profile-header">
+            <a href="javascript:history.back()" class="close-button">&times;</a>
+            <section class="user-info">
+                <h1 id="userNameDisplay"></h1> <p id="userProfileDisplay">מחובר כ-...</p>
+            </section>
+        </header>
+        <main class="profile-main-content">
+            <section class="profile-section">
+                <ul class="profile-options">
+                    <li>
+                        <button id="logoutButton" class="profile-option-button">
+                            <span class="button-text">התנתק</span>
+                            <span class="button-icon">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </span>
+                        </button>
+                    </li>
+                    <li>
+                        <a href="#" class="profile-option-link">
+                            <span class="option-text">הוספת פרופיל</span>
+                            <span class="option-icon"><i class="fas fa-user-plus"></i></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="profile-option-link">
+                            <span class="option-text">ניתוק מכל הפרופילים</span>
+                            <span class="option-icon"><i class="fas fa-users-slash"></i></span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+            <section class="profile-section">
+                <ul class="profile-options">
+                    <li>
+                        <a href="#" class="profile-option-link">
+                            <span class="option-text">הגדרות</span>
+                            <span class="option-icon"><i class="fas fa-cog"></i></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="profile-option-link">
+                            <span class="option-text">הצהרת נגישות</span>
+                            <span class="option-icon"><i class="fas fa-wheelchair"></i></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="profile-option-link">
+                            <span class="option-text">מדיניות הפרטיות</span>
+                            <span class="option-icon"><i class="fas fa-shield-alt"></i></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="profile-option-link">
+                            <span class="option-text">תנאי שימוש</span>
+                            <span class="option-icon"><i class="fas fa-info-circle"></i></span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+        </main>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script src="../js/profilePage.js"></script>
+</body>
+</html>

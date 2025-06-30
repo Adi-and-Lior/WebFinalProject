@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasCity       = city !== undefined && city !== null && city !== '';
 
         if (hasCoreFields && (!needsCity || hasCity)) {
+          localStorage.setItem('loggedInUserName', username);
           localStorage.setItem('loggedInUser', JSON.stringify({
             username,
             userId,

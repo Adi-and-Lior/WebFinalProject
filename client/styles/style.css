@@ -314,6 +314,79 @@ Header{
   width: 300px;
   height: 270px;
 }
+/*for profile.html page*/
+.profile-container {
+    margin: 50px auto; /* רווח מהחלק העליון ומרכוז */
+}
+.profile-header {
+    background-color: #f8f8f8; /* רקע בהיר לכותרת */
+    padding: 30px 20px;
+    text-align: right;
+    position: relative;
+    border-bottom: 1px solid #eee;
+}
+.close-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 70px; /* הגדלה של כפתור X */
+    color: #666;
+    text-decoration: none;
+    line-height: 1;
+    cursor: pointer;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* יישור לימין בגלל RTL */
+    gap: 20px; /* רווח בין האלמנטים */
+    direction: rtl; /* כיוון זרימה מימין לשמאל */
+}
+.user-info h1 {
+    font-size: 60px; /* גודל פונט דומה ל-h3 של userBlock */
+    color: #333;
+    white-space: nowrap;
+}
+.user-info p {
+    font-size: 40px; /* גודל פונט גדול יותר לסטטוס */
+    color: #777;
+    white-space: nowrap;
+    margin-right: 20px;
+}
+.profile-section ul {
+    list-style: none;
+}
+.profile-options{
+  padding: 0;
+}
+.profile-option-link, .profile-option-button {
+    display: flex;
+    justify-content: flex-end; /* יישור לימין בגלל RTL */
+    align-items: center;
+    padding: 25px 30px; /* פדינג גדול יותר כמו כפתורים אחרים */
+    text-decoration: none;
+    color: #333;
+    font-size: 35px; /* גודל פונט גדול יותר */
+    background-color: transparent;
+    border: none;
+    text-align: right;
+    gap: 15px; /* רווח בין אייקון לטקסט */
+}
+.button-text, .option-text {
+    flex-grow: 1;
+    text-align: right;
+}
+.button-icon, .option-icon {
+    font-size: 30px; /* גודל אייקון גדול יותר */
+    color: #888;
+    flex-shrink: 0;
+}
+#logoutButton {
+    color: #0E4866; /* צבע כחול-כהה כמו כותרות האייקונים בפוטר */
+}
+#logoutButton:hover {
+    font-weight: bold; /* ודא שהוא מודגש */
+}
 /*for newReportPage.html page*/
 .app-container {
     background-color: #EBFFF8;
