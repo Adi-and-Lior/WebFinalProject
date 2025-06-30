@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles/style.css" />
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
 </head>
 <body class="Wrapper">
     <section class="profile-container">
@@ -20,12 +21,18 @@
             <section class="profile-section">
                 <ul class="profile-options">
                     <li>
-                        <button id="logoutButton" class="profile-option-button">
-                            <span class="button-text">התנתק</span>
-                            <span class="button-icon">
+                        <a href="#" id="logoutButton" class="profile-option-button">
+                            <span class="option-text">התנתק</span>
+                            <span class="option-icon">
                                 <i class="fas fa-sign-out-alt"></i>
                             </span>
-                        </button>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="deleteProfileButton" class="profile-option-link">
+                            <span class="option-text">מחיקת פרופיל</span>
+                            <span class="option-icon"><i class="fas fa-users-slash"></i></span>
+                        </a>
                     </li>
                     <li>
                         <a href="#" class="profile-option-link">
@@ -33,16 +40,6 @@
                             <span class="option-icon"><i class="fas fa-user-plus"></i></span>
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="profile-option-link">
-                            <span class="option-text">ניתוק מכל הפרופילים</span>
-                            <span class="option-icon"><i class="fas fa-users-slash"></i></span>
-                        </a>
-                    </li>
-                </ul>
-            </section>
-            <section class="profile-section">
-                <ul class="profile-options">
                     <li>
                         <a href="#" class="profile-option-link">
                             <span class="option-text">הגדרות</span>

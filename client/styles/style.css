@@ -353,11 +353,11 @@ Header{
     white-space: nowrap;
     margin-right: 20px;
 }
-.profile-section ul {
-    list-style: none;
-}
 .profile-options{
   padding: 0;
+}
+.profile-options li{
+  list-style: none;
 }
 .profile-option-link, .profile-option-button {
     display: flex;
@@ -365,12 +365,13 @@ Header{
     align-items: center;
     padding: 25px 30px; /* פדינג גדול יותר כמו כפתורים אחרים */
     text-decoration: none;
-    color: #333;
-    font-size: 35px; /* גודל פונט גדול יותר */
+    color: #0E4866;
+    font-size: 40px; /* גודל פונט גדול יותר */
     background-color: transparent;
     border: none;
     text-align: right;
     gap: 15px; /* רווח בין אייקון לטקסט */
+    cursor: default;
 }
 .button-text, .option-text {
     flex-grow: 1;
@@ -381,11 +382,13 @@ Header{
     color: #888;
     flex-shrink: 0;
 }
-#logoutButton {
-    color: #0E4866; /* צבע כחול-כהה כמו כותרות האייקונים בפוטר */
-}
 #logoutButton:hover {
-    font-weight: bold; /* ודא שהוא מודגש */
+    font-weight: bold; 
+    cursor: pointer;
+}
+#deleteProfileButton:hover{
+    font-weight: bold;
+    cursor: pointer;
 }
 /*for newReportPage.html page*/
 .app-container {
