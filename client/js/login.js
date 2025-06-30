@@ -3,9 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const usernameInput = document.getElementById('username');
   const passwordInput = document.getElementById('password');
   const selectedUserType = localStorage.getItem('selectedUserType');
-
   const API_BASE_LOGIN = 'https://webfinalproject-j4tc.onrender.com/api/login';
-
   console.log('Selected user type on the login page:', selectedUserType);
 
   if (!loginForm) {
@@ -47,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Login successful:', data.message);
       console.log('User data from server:', data.user);
 
-      // --- בדיקת השדות ---
       if (!data.user) {
         console.warn('התשובה מהשרת חסרה עטיפה user.');
       } else {
@@ -58,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasCity       = city !== undefined && city !== null && city !== '';
 
         if (hasCoreFields && (!needsCity || hasCity)) {
-          // שמירה בלוקל סטורג'
           localStorage.setItem('loggedInUser', JSON.stringify({
             username,
             userId,

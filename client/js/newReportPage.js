@@ -39,8 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Variables for location and address
     let currentLat = null;
     let currentLon = null;
-    let locationString = ''; // Full address from geocoding
-    let currentCity = '';    // <-- חדש: לשמור את שם העיר מהמיקום הנוכחי
+    let locationString = '';
+    let currentCity = ''; 
 
     // User info from localStorage
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Path constants for icons ---
-    const V_ICON_PATH = '../images/V_icon.svg'; // Path to the checkmark icon
-    const ASTERISK_ICON_PATH = '../images/asterisk.svg'; // Path to the asterisk icon
+    const V_ICON_PATH = '../images/V_icon.svg'; 
+    const ASTERISK_ICON_PATH = '../images/asterisk.svg';
 
     // --- Function to update icon based on input/selection ---
     function updateStatusIcon(inputElement, iconElement) {
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (streetStatusIcon) streetStatusIcon.src = ASTERISK_ICON_PATH;
 
             getCurrentLocation();
-        } else { // Default (nothing selected)
+        } else { 
             manualAddressSection.style.display = 'none';
             cityInput.removeAttribute('required');
             cityInput.value = '';

@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api';
-    // --- אלמנטים מה-HTML שיש לעדכן ---
     const backButton = document.querySelector('.reports-title .back-arrow').closest('a'); // כפתור חזור
     const homeButton = document.querySelector('.thank-you-footer button'); // כפתור חזרה לעמוד הבית
 
@@ -12,8 +11,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const mediaContainer = document.getElementById('displayMedia'); 
     const displayStatus = document.getElementById('displayStatus'); 
     const displayResponse = document.getElementById('displayMunicipalityResponse'); 
-
-    // --- פונקציות עזר ---
 
     // פונקציה לקבלת פרמטר מה-URL
     function getUrlParameter(name) {
@@ -44,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('שגיאה באחזור פרטי דיווח:', error);
             alert('אירעה שגיאה באחזור פרטי הדיווח. אנא נסה שוב מאוחר יותר.');
-            return null; // החזר null במקרה של שגיאה
+            return null;
         }
     }
 
@@ -100,14 +97,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 break;
         }
         displayStatus.textContent = statusText;
-        displayStatus.classList.add(statusClass); // הוסף קלאס לצורך עיצוב ב-CSS
+        displayStatus.classList.add(statusClass); 
 
         // תגובת הרשות המקומית
         displayResponse.textContent = report.municipalityResponse || 'טרם התקבלה תגובה';
 
         // הצגת מדיה (תמונה/וידאו)
         if (report.media) {
-            const mediaUrl = `${API_BASE_URL.replace('/api', '')}/uploads/${report.media}`; // נתיב לקובץ המדיה
+            const mediaUrl = `${API_BASE_URL.replace('/api', '')}/uploads/${report.media}`; 
             const fileExtension = report.media.split('.').pop().toLowerCase();
 
             let mediaElement;
@@ -115,24 +112,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mediaElement = document.createElement('img');
                 mediaElement.src = mediaUrl;
                 mediaElement.alt = 'תמונת דיווח';
-                mediaElement.classList.add('detail-media'); // קלאס חדש לעיצוב המדיה
+                mediaElement.classList.add('detail-media'); 
             } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
                 mediaElement = document.createElement('video');
                 mediaElement.src = mediaUrl;
-                mediaElement.controls = true; // הצג כפתורי שליטה
-                mediaElement.classList.add('detail-media'); // קלאס חדש לעיצוב המדיה
+                mediaElement.controls = true; 
+                mediaElement.classList.add('detail-media'); 
             }
 
             if (mediaElement) {
-                mediaContainer.innerHTML = ''; // נקה תוכן קיים
+                mediaContainer.innerHTML = ''; 
                 mediaContainer.appendChild(mediaElement);
             }
         } else {
             mediaContainer.textContent = 'אין מדיה מצורפת';
         }
     }
-
-    // --- אירועים וטעינה ראשונית ---
 
     // קבלת ה-reportId מה-URL
     const reportId = getUrlParameter('id');
@@ -144,15 +139,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert('שגיאה: מזהה דיווח חסר. אנא חזור לדף הדיווחים.');
     }
 
-    // אירוע לחיצה על כפתור חזור (חץ אחורה)
     if (backButton) {
         backButton.addEventListener('click', (event) => {
             event.preventDefault();
-            window.history.back(); // חזרה לדף הקודם
+            window.history.back();
         });
     }
 
-    // אירוע לחיצה על כפתור חזרה לעמוד הבית
     if (homeButton) {
         homeButton.addEventListener('click', () => {
             window.location.href = '/html/homePageCitizen.html'; 

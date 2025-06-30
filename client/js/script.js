@@ -6,24 +6,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     profileOptions.forEach(option => {
         option.addEventListener('click', () => {
-            // הסר את הסימון (V) ואת קלאס ה-selected מכל האופציות
             profileOptions.forEach(opt => {
                 opt.classList.remove('selected');
                 const checkIcon = opt.querySelector('.check-icon');
                 if (checkIcon) {
-                    checkIcon.classList.add('hidden'); // מסתיר את ה-V
+                    checkIcon.classList.add('hidden');
                 }
             });
-            // הוסף את הסימון (V) ואת קלאס ה-selected לאופציה שנלחצה
             option.classList.add('selected');
             const selectedCheckIcon = option.querySelector('.check-icon');
             if (selectedCheckIcon) {
                 selectedCheckIcon.classList.remove('hidden'); // מציג את ה-V
             }
-            // שמור את הפרופיל הנבחר
+
             selectedProfile = option.dataset.profile;
             console.log('פרופיל נבחר:', selectedProfile);
-            localStorage.setItem('selectedUserType', selectedProfile); // שמור את סוג המשתמש ב-localStorage
+            localStorage.setItem('selectedUserType', selectedProfile);
         });
     });
     if (continueButton) {

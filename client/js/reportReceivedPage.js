@@ -50,14 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension)) {
                 mediaPreview.src = mediaUrl;
-                mediaPreview.style.display = 'block'; // Show the image
+                mediaPreview.style.display = 'block';
             } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
                 const videoElement = document.createElement('video');
                 videoElement.controls = true;
                 videoElement.src = mediaUrl;
                 videoElement.classList.add('uploaded-media-preview');
                 displayMedia.appendChild(videoElement);
-                mediaPreview.style.display = 'none'; // Hide the <img> element
+                mediaPreview.style.display = 'none';
             } else {
                 mediaPreview.style.display = 'none';
             }
@@ -77,8 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displayMedia.textContent = 'אין נתונים';
         mediaPreview.style.display = 'none';
     }
-
-    // --- Button handling ---
+    
     if (goToMyReportsBtn) {
         goToMyReportsBtn.addEventListener('click', () => {
             window.location.href = '/html/myReportsPage.html';

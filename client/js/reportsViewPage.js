@@ -38,11 +38,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         return arr;
     }
 
-    function createReportCard(report) { // הסרנו את index מכיוון שהוא לא נחוץ יותר למספר התצוגה
+    function createReportCard(report) { 
         const card = document.createElement('section');
         card.classList.add('report-summary-card');
 
-        // השתמש ב-4 הספרות האחרונות של ה-ID הייחודי
         const displayId = report._id.slice(-4);
 
         card.innerHTML = `
@@ -66,7 +65,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             reportsDisplayArea.appendChild(p);
             return;
         }
-        // העברנו רק את הדיווח עצמו ל-createReportCard
         sorted.forEach(r => reportsDisplayArea.appendChild(createReportCard(r)));
     }
 

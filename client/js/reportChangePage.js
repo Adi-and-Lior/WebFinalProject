@@ -1,20 +1,11 @@
-// reportEditPage.js (או reportChangePage.js)
-// --------------------------------------------------------
-// טוען את פרטי הדיווח ומציג אותם בדף העריכה / צפייה לעובד
-// --------------------------------------------------------
-
 document.addEventListener('DOMContentLoaded', async () => {
-    // ------------------ קבלת פרמטרים מה‑URL ------------------
     const urlParams = new URLSearchParams(window.location.search);
-    const reportId = urlParams.get('id');   // מזהה MongoDB
-    // const reportSeq = urlParams.get('seq'); // *** שורה זו הוסרה/הועברה להערה ***
+    const reportId = urlParams.get('id'); 
 
-    // אלמנטים בדף
     const reportsTitleElement = document.querySelector('.reports-title h1');
     const reportNumberDisplay = document.getElementById('reportNumberDisplay'); // זהו ה-span בתוך ה-h1
     const backButton = document.getElementById('backButton');
 
-    // אלמנטים להצגה
     const displayFaultType = document.getElementById('displayFaultType');
     const displayLocation = document.getElementById('displayLocation');
     const displayDate = document.getElementById('displayDate');
@@ -38,8 +29,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         'completed': 'הושלם',
         'rejected': 'נדחה',
     };
-
-    // ------------------ פונקציות עזר ------------------
 
     function getLoggedInUser() {
         const user = localStorage.getItem('loggedInUser');
@@ -103,8 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             displayTime.textContent = 'לא ידוע';
         }
 
-        // תיאור - ודא שזה report.description ולא report.faultDescription
-        displayDescription.textContent = report.description || 'אין תיאור.';
+        displayDescription.textContent = report.faultDescription || 'אין תיאור';
 
         // הצגת מדיה
         mediaContainer.innerHTML = '';
@@ -129,19 +117,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // סטטוס ותגובת רשות - כאן מציגים את הסטטוס בעברית ומוסיפים מחלקת צבע מתאימה
         let normalizedStatus = (report.status || '').toLowerCase().replace(/_/g, '-');
         const statusHebrew = statusTranslations[normalizedStatus] || 'לא ידוע';
 
-        // ודא שהאלמנט displayStatus קיים לפני שאתה מנסה לגשת אליו (אם זה דף עריכה, הוא לא תמיד קיים)
         const displayStatus = document.getElementById('displayStatus');
         if (displayStatus) {
             displayStatus.textContent = statusHebrew;
 
-            // הסרת כל מחלקות הסטטוס לפני הוספה
             displayStatus.classList.remove('status-paid', 'status-rejected', 'status-in-progress');
 
-            // הוספת מחלקה לפי סטטוס
             if (normalizedStatus === 'completed') {
                 displayStatus.classList.add('status-paid');
             } else if (normalizedStatus === 'rejected') {
@@ -152,11 +136,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const displayMunicipalityResponse = document.getElementById('displayMunicipalityResponse');
-        if (displayMunicipalityResponse) { // ודא שהאלמנט קיים
+        if (displayMunicipalityResponse) { 
             displayMunicipalityResponse.textContent = report.municipalityResponse || 'טרם התקבלה תגובה מהרשות המקומית.';
         }
 
-        // מילוי שדות העריכה אם הם קיימים בדף (בדף reportChangePage.html)
         if (editStatus) {
             editStatus.value = report.status || 'in-progress';
         }
@@ -165,31 +148,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // ------------------ תחילת לוגיקת הדף ------------------
-
-    // בדיקת תקינות ID
     if (!reportId) {
         reportsTitleElement.textContent = 'שגיאה: ID דיווח חסר';
         console.error('Report ID is missing from the URL.');
         return;
     }
-    
     if (reportNumberDisplay) {
          reportsTitleElement.textContent = `דיווח #${reportId.slice(-4)}`;
     }
 
-
-    // בדיקת הרשאת משתמש (רלוונטי לדף עריכה)
     const user = getLoggedInUser();
-    // אם זה דף עריכה (נזהה ע"י קיום כפתור שמירה), נבדוק הרשאות
     if (saveChangesButton) {
         if (!user || user.userType !== 'employee') {
             alert('אין לך הרשאה לערוך דיווחים.');
-            window.location.href = '../html/login.html'; // מפנה לדף ההתחברות
+            window.location.href = '../html/login.html'; 
             return;
         }
     }
-
 
     currentReport = await fetchReportDetails(reportId);
     if (currentReport) {
@@ -200,14 +175,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (mainContent) {
             mainContent.innerHTML = '<p style="color: red; text-align: center;">הדיווח לא נמצא או אירעה שגיאה בטעינה.</p>';
         }
-        // הסתרת כפתורי שמירה וביטול אם הדיווח לא נמצא (בדף עריכה)
         if (saveChangesButton) saveChangesButton.style.display = 'none';
         if (cancelChangesButton) cancelChangesButton.style.display = 'none';
     }
 
-    // ------------------ הגדרת מאזיני אירועים ------------------
-
-    // כפתורי שמירה וביטול (אם קיימים - ב-reportChangePage.html)
     if (saveChangesButton) {
         saveChangesButton.addEventListener('click', async () => {
             const updatedData = {
@@ -218,37 +189,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const result = await updateReport(reportId, updatedData);
             if (result) {
                 alert('השינויים נשמרו בהצלחה!');
-                // חזרה לדף התצוגה לאחר שמירה, מעבירים רק את ה-ID
                 window.location.href = `/html/finalReportPage.html?id=${reportId}`;
             }
         });
     }
-
     if (cancelChangesButton) {
         cancelChangesButton.addEventListener('click', () => {
             if (currentReport) {
-                populateReportData(currentReport); // חזרה לנתונים המקוריים
+                populateReportData(currentReport); 
             }
             alert('השינויים בוטלו.');
-        });
-    }
-
-    // כפתור חזור (חץ או כפתור חזרה)
-    if (backButton) { // זה יכול להיות גם ה-backArrow שצוין למעלה
-        backButton.addEventListener('click', e => {
-            e.preventDefault();
             window.history.back();
-        });
-    }
-
-    // כפתור "עריכת דף" (אם קיים - ב-finalReportPage.html)
-    // שים לב: הקובץ הזה הוא reportEditPage/ChangePage, אז כפתור כזה יהיה רק ב-finalReportPage.js
-    // אבל אם במקרה הכפתור הזה נמצא כאן (בדף העריכה עצמו), הלוגיקה הבאה מתאימה:
-    const editPageButton = document.querySelector('.footer-employee button'); // כפתור עריכה מתוך דף תצוגה
-    if (editPageButton) {
-        editPageButton.addEventListener('click', () => {
-            // מעבר לדף העריכה עם ה-ID
-            window.location.href = `/html/reportChangePage.html?id=${reportId}`;
         });
     }
 });

@@ -1,38 +1,24 @@
-// reportEditPage.js
-// --------------------------------------------------------
-// טוען את פרטי הדיווח ומציג אותם בדף העריכה / צפייה לעובד
-// --------------------------------------------------------
-
 document.addEventListener('DOMContentLoaded', async () => {
-    // ------------------ קבלת פרמטרים מה‑URL ------------------
     const urlParams = new URLSearchParams(window.location.search);
     const reportId = urlParams.get('id');   // מזהה MongoDB
-    // const reportSeq = urlParams.get('seq'); // *** שורה זו הוסרה ***
 
-    // אלמנטים בדף
-    const reportsTitleElement = document.querySelector('.reports-title h1');
+    const reportsTitleElement = document.querySelector('.reports-title h2');
     const backArrow = document.querySelector('.back-arrow');
 
-    // בדיקת תקינות ID
     if (!reportId) {
         reportsTitleElement.textContent = 'שגיאה: ID דיווח חסר';
         console.error('Report ID is missing from the URL.');
         return;
     }
 
-    // ------------------ כותרת הדף ------------------
-    // *** בלוק ה-if/else עבור reportSeq הוחלף בשימוש ישיר ב-reportId.slice(-4) ***
     reportsTitleElement.textContent = `דיווח #${reportId.slice(-4)}`;
 
-    // מיפוי סטטוסים באנגלית לעברית
     const statusTranslations = {
         'in-progress': 'בטיפול',
         'completed': 'הושלם',
         'rejected': 'נדחה',
-        // הוסף כאן סטטוסים נוספים במידה ויש
     };
 
-    // ------------------ שליפת פרטי הדיווח מהשרת ------------------
     try {
         const response = await fetch(`/api/reports/${reportId}`);
         if (!response.ok) {
@@ -42,7 +28,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const report = await response.json();
         console.log('Report details fetched:', report);
 
-        // ------------------ מילוי הנתונים בדף ------------------
         document.getElementById('displayFaultType').textContent = report.faultType || 'לא ידוע';
 
         // מיקום
@@ -70,9 +55,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // תיאור
         document.getElementById('displayDescription').textContent =
-            report.description || 'אין תיאור.';
+            report.faultDescription || 'אין תיאור.';
 
-        // ------------------ הצגת מדיה ------------------
         const mediaContainer = document.getElementById('mediaContainer');
         if (report.media) {
             const mediaUrl = `/uploads/${report.media}`;
@@ -93,19 +77,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // סטטוס + תגובת רשות - כאן מציגים את הסטטוס בעברית ומוסיפים מחלקת צבע מתאימה
         let normalizedStatus = (report.status || '').toLowerCase().replace(/_/g, '-');
 
-        // *** שונה: ודא שהגיבוי הוא רק "לא ידוע" ולא report.status ***
         const statusHebrew = statusTranslations[normalizedStatus] || 'לא ידוע';
 
         const statusElement = document.getElementById('displayStatus');
         statusElement.textContent = statusHebrew;
 
-        // הסרת כל מחלקות הסטטוס לפני הוספה
         statusElement.classList.remove('status-paid', 'status-rejected', 'status-in-progress');
 
-        // הוספת מחלקה לפי סטטוס
         if (normalizedStatus === 'completed') {
             statusElement.classList.add('status-paid');
         } else if (normalizedStatus === 'rejected') {
@@ -127,16 +107,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // ------------------ כפתור "עריכת דף" ------------------
     const editPageButton = document.querySelector('.footer-employee button');
     if (editPageButton) {
         editPageButton.addEventListener('click', () => {
-            // *** הפרמטר &seq הוסר מה-URL בעת המעבר לדף העריכה ***
             window.location.href = `/html/reportChangePage.html?id=${reportId}`;
         });
     }
 
-    // ------------------ כפתור חזור ------------------
     if (backArrow) {
         backArrow.addEventListener('click', evt => {
             evt.preventDefault();
