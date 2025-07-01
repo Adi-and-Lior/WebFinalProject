@@ -45,10 +45,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     function createReportCard(report) {
         const reportCard = document.createElement('section');
         reportCard.classList.add('report-card');
-        reportCard.dataset.reportId = report.id;
+        reportCard.dataset.reportId = report._id;
 
         reportCard.addEventListener('click', () => {
-            window.location.href = `/html/reportingDetailsPage.html?id=${report.id}`;
+            window.location.href = `/html/reportingDetailsPage.html?id=${report._id}`;
         });
 
         const timestamp = report.timestamp ? new Date(report.timestamp) : null;
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 statusText = 'בטיפול';
                 break;
             case 'completed':
-                statusClass = 'status-completed'; 
+                statusClass = 'status-paid'; 
                 statusText = 'הושלם';
                 break;
             case 'rejected':

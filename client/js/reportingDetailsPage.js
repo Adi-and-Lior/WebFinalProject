@@ -55,14 +55,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // עדכון פרטי הטקסט
         displayFaultType.textContent = report.faultType || 'לא זמין';
-        displayDescription.textContent = report.description || 'אין תיאור';
+        displayDescription.textContent = report.faultDescription || 'אין תיאור';
 
         // מיקום
         if (report.location) {
             if (report.location.city && report.location.street) {
                 displayLocation.textContent = `${report.location.street}, ${report.location.city}`;
             } else if (report.location.type === 'current') {
-                displayLocation.textContent = 'מיקום נוכחי';
+                displayLocation.textContent = `${report.location.street}, ${report.location.city}`;
             } else {
                 displayLocation.textContent = 'מיקום לא ידוע';
             }
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 break;
             case 'completed':
                 statusText = 'הושלם';
-                statusClass = 'status-completed';
+                statusClass = 'status-paid';
                 break;
             case 'rejected':
                 statusText = 'נדחה';
