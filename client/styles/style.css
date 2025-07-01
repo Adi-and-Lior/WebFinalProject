@@ -838,7 +838,6 @@ textarea:focus{
     margin: 0;
     margin-left: 75px;
     padding-top:150px;
-    direction: rtl;
 }
 .footer-employee{
     display: flex;             

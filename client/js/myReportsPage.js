@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 break;
             case 'completed':
                 statusClass = 'status-completed'; 
-                statusText = 'טופל';
+                statusText = 'הושלם';
                 break;
             case 'rejected':
                 statusClass = 'status-rejected';
