@@ -42,14 +42,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    async function deleteReport(reportId) {
+        if (!confirm('האם אתה בטוח שברצונך למחוק דיווח זה?')) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/reports/${reportId}?userId=${currentUserId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || 'כשל במחיקת דיווח מהשרת.');
+            }
+
+            alert('הדיווח נמחק בהצלחה!');
+            // רענן את רשימת הדיווחים לאחר המחיקה
+            allReports = await fetchReports();
+            displayReports(sortReports(allReports, sortReportsDropdown.value));
+
+        } catch (error) {
+            console.error('שגיאה במחיקת דיווח:', error);
+            alert(`אירעה שגיאה במחיקת הדיווח: ${error.message}`);
+        }
+    }
+
     function createReportCard(report) {
         const reportCard = document.createElement('section');
         reportCard.classList.add('report-card');
         reportCard.dataset.reportId = report._id;
 
-        reportCard.addEventListener('click', () => {
+        reportCard.addEventListener('click', (event) => {
+        // ודא שהקליק לא היה על כפתור המחיקה או אלמנט בתוכו
+        if (!event.target.closest('.delete-report-button')) {
             window.location.href = `/html/reportingDetailsPage.html?id=${report._id}`;
-        });
+        }
+    });
 
         const timestamp = report.timestamp ? new Date(report.timestamp) : null;
         const displayDate = timestamp ? timestamp.toLocaleDateString('he-IL') : 'לא ידוע';
@@ -104,8 +134,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <h3 class="report-status ${statusClass}">${statusText}</h3>
             </section>
             ${mediaHtml}
+            ${currentUserType === 'citizen' ? `
+            <button class="delete-report-button" title="מחק דיווח">
+                <img src="../images/Trash_can.svg" alt="מחק" class="trash-icon">
+            </button>` : ''}
 
         `;
+
+        const deleteButton = reportCard.querySelector('.delete-report-button');
+        if (deleteButton) {
+            deleteButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // מונע את הפעלת ה-listener של reportCard
+                deleteReport(report._id);
+            });
+        }
         return reportCard;
     }
 

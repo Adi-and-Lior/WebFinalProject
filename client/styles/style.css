@@ -826,6 +826,22 @@ textarea:focus{
 #displayMedia{
     width: 25px; 
 }
+.delete-report-button {
+    background: none; 
+    border: none;    
+    padding: 0;      
+    cursor: pointer; 
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-right: 370px;
+}
+.delete-report-button .trash-icon {
+    width: 40px; 
+    height: auto; 
+    display: block;
+}
 /*for reportEditPage page*/
 .reports-title h2{
     width: 600px;
