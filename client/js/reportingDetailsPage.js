@@ -103,17 +103,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         displayResponse.textContent = report.municipalityResponse || 'טרם התקבלה תגובה';
 
         // הצגת מדיה (תמונה/וידאו)
-        if (report.media) {
-            const mediaUrl = `${API_BASE_URL.replace('/api', '')}/uploads/${report.media}`; 
-            const fileExtension = report.media.split('.').pop().toLowerCase();
+        if (report.media && report.mediaMimeType) {
+            const mediaUrl = `${API_BASE_URL}/media/${report.media}`;
+            const mimeType = report.mediaMimeType;
 
             let mediaElement;
-            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension)) {
+            if (mimeType.startsWith('image/')) {
                 mediaElement = document.createElement('img');
                 mediaElement.src = mediaUrl;
                 mediaElement.alt = 'תמונת דיווח';
                 mediaElement.classList.add('detail-media'); 
-            } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+            } else if (mimeType.startsWith('video/')) {
                 mediaElement = document.createElement('video');
                 mediaElement.src = mediaUrl;
                 mediaElement.controls = true; 
@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (mediaElement) {
                 mediaContainer.innerHTML = ''; 
                 mediaContainer.appendChild(mediaElement);
+            }else { // <--- הוסף else למקרה ש-mediaMimeType לא נתמך
+                mediaContainer.textContent = 'פורמט מדיה לא נתמך';
             }
         } else {
             mediaContainer.textContent = 'אין מדיה מצורפת';

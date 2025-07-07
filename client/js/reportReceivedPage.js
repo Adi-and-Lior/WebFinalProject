@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const goToMyReportsBtn = document.getElementById('goToMyReportsBtn');
     const goToHomeBtn = document.getElementById('goToHomeBtn');
 
+    const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api'; 
     // Load report details from localStorage
     const lastReportDetails = JSON.parse(localStorage.getItem('lastReportDetails'));
 
@@ -41,30 +42,42 @@ document.addEventListener('DOMContentLoaded', () => {
         displayDescription.textContent = lastReportDetails.faultDescription || 'אין תיאור';
 
         // Display media file
-        if (lastReportDetails.mediaFileName && lastReportDetails.mediaFileName !== 'אין קובץ') {
-            displayMedia.textContent = lastReportDetails.mediaFileName;
+        if (lastReportDetails.mediaId && lastReportDetails.mediaId !== 'no media') {
+    // ה-URL הנכון הוא דרך ה-API שמגיש מדיה לפי ID
+    const mediaUrl = `${API_BASE_URL}/media/${lastReportDetails.mediaId}`;
+    const mimeType = lastReportDetails.mediaMimeType; // קבל את ה-MIME type ששמרנו
 
-            // *** IMPORTANT: Replace 'https://your-backend-app-name.railway.app' with the actual public URL of your Backend on Railway ***
-            const mediaUrl = `https://webfinalproject-j4tc.onrender.com/uploads/${lastReportDetails.mediaFileName}`; // Changed this line to use the Railway backend URL
-            const fileExtension = lastReportDetails.mediaFileName.split('.').pop().toLowerCase();
+    // וודא שננקה כל מדיה קודמת לפני הוספת החדשה
+    // הסתר את אלמנט ה-img preview המקורי
+    mediaPreview.style.display = 'none';
+    // אם יש כבר אלמנט וידאו קודם, הסר אותו (חשוב במקרה של ניווט לדף הזה שוב)
+    let existingVideoElement = document.getElementById('reportMediaVideoPreview');
+    if (existingVideoElement) {
+        existingVideoElement.remove();
+    }
 
-            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension)) {
-                mediaPreview.src = mediaUrl;
-                mediaPreview.style.display = 'block';
-            } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
-                const videoElement = document.createElement('video');
-                videoElement.controls = true;
-                videoElement.src = mediaUrl;
-                videoElement.classList.add('uploaded-media-preview');
-                displayMedia.appendChild(videoElement);
-                mediaPreview.style.display = 'none';
-            } else {
-                mediaPreview.style.display = 'none';
-            }
-        } else {
-            displayMedia.textContent = 'אין קובץ מצורף';
-            mediaPreview.style.display = 'none';
-        }
+    if (mimeType && mimeType.startsWith('image/')) {
+        mediaPreview.src = mediaUrl;
+        mediaPreview.style.display = 'block'; // הצג את אלמנט ה-img
+        displayMedia.textContent = 'קובץ תמונה מצורף'; // טקסט תיאורי
+    } else if (mimeType && mimeType.startsWith('video/')) {
+        const videoElement = document.createElement('video');
+        videoElement.id = 'reportMediaVideoPreview'; // תן לו ID לזיהוי עתידי
+        videoElement.controls = true;
+        videoElement.src = mediaUrl;
+        videoElement.classList.add('uploaded-media-preview');
+        // הוסף את אלמנט הוידאו ל-displayMedia (או לכל אלמנט אחר שתבחר)
+        displayMedia.appendChild(videoElement);
+        displayMedia.textContent = 'קובץ וידאו מצורף'; // טקסט תיאורי
+    } else {
+        // Fallback אם אין MIME type או שהוא לא נתמך (או ש-mediaId קיים אבל mimeType לא)
+        displayMedia.textContent = 'קובץ מדיה לא נתמך או לא זוהה';
+        mediaPreview.style.display = 'none';
+    }
+} else {
+    displayMedia.textContent = 'אין קובץ מצורף';
+    mediaPreview.style.display = 'none';
+}
 
     } else {
         // If no data in localStorage (e.g., user navigated directly to the page)

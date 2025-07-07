@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. Defining HTML elements ---
     const backButton = document.getElementById('backButton');
     const reportForm = document.querySelector('.report-form');
-
+    const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api';
     // Fault type elements
     const faultTypeSelect = document.getElementById('fault-type');
     const faultDescriptionTextarea = document.getElementById('fault-description');
@@ -463,7 +463,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             try {
-                const res = await fetch('https://webfinalproject-j4tc.onrender.com/api/reports', {
+                console.log('[Client] mediaToUpload:', mediaToUpload);
+                console.log('[Client] mediaToUpload name:', mediaToUpload?.name);
+                console.log('[Client] mediaToUpload size:', mediaToUpload?.size);
+                console.log('[Client] mediaToUpload type:', mediaToUpload?.type);
+                for (const pair of formData.entries()) {
+                    console.log(pair[0]+ ': ' + pair[1]);
+                }
+                const res = await fetch(`${API_BASE_URL}/reports`, {
                     method: 'POST',
                     body: formData
                 });
@@ -485,9 +492,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     localStorage.setItem('lastReportDetails', JSON.stringify({
                         faultType: faultTypeSelect.options[faultTypeSelect.selectedIndex].text,
-                        faultDescription,
+                        faultDescription: faultDescription,
                         location: displayLocation,
-                        mediaFileName: data.mediaFileNameOnServer || 'no media'
+                        timestamp: new Date().toISOString(),
+                        mediaId: data.mediaGridFSId || 'no media',
+                        mediaMimeType: data.mediaMimeType || null
                     }));
 
                     alert('הדיווח נשלח בהצלחה!');

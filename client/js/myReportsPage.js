@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
     let currentUserId = loggedInUser ? loggedInUser.userId : null;
     let currentUserType = loggedInUser ? loggedInUser.userType : null;
-
+     
     const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api';
     if (!currentUserId) {
         console.warn('אין משתמש מחובר. לא ניתן לאחזר דיווחים.');
@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return [];
         }
     }
-
+    let allReports = [];
+    allReports = await fetchReports();
     async function deleteReport(reportId) {
         if (!confirm('האם אתה בטוח שברצונך למחוק דיווח זה?')) {
             return;
@@ -107,25 +108,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let mediaHtml = '';
         if (report.media) {
-            const mediaUrl = `${API_BASE_URL.replace('/api', '')}/uploads/${report.media}`; 
-            const fileExtension = report.media.split('.').pop().toLowerCase();
-
-            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension)) {
-                mediaHtml = `<section class="report-image-wrapper">
-                                 <img src="${mediaUrl}" alt="תמונת דיווח" class="report-thumbnail">
-                             </section>`;
-            } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
-                mediaHtml = `<section class="report-image-wrapper">
-                                 <video src="${mediaUrl}" controls class="report-thumbnail"></video>
-                             </section>`;
-            }
-        } else {
-            mediaHtml = `<section class="report-image-wrapper">
-                             <img src="https://placehold.co/90x90/eeeeee/333333?text=אין+מדיה" alt="אין מדיה" class="report-thumbnail">
-                         </section>`;
-        }
-
-
+            const mediaUrl = `${API_BASE_URL}/media/${report.media}`; 
+            const mimeType = report.mediaMimeType;
+        
+         if (mimeType && mimeType.startsWith('image/')) {
+        mediaHtml = `<section class="report-image-wrapper">
+                         <img src="${mediaUrl}" alt="תמונת דיווח" class="report-thumbnail">
+                     </section>`;
+    } else if (mimeType && mimeType.startsWith('video/')) {
+        mediaHtml = `<section class="report-image-wrapper">
+                         <video src="${mediaUrl}" controls class="report-thumbnail"></video>
+                     </section>`;
+    } }else {
+        // Fallback for cases where mediaMimeType is missing or not recognized
+        // (לדוגמה, דיווחים ישנים שלא נשמרו עם mediaMimeType, או סוג קובץ לא נתמך)
+        mediaHtml = `<section class="report-image-wrapper">
+                         <img src="https://placehold.co/90x90/eeeeee/333333?text=אין+מדיה" alt="אין מדיה" class="report-thumbnail">
+                     </section>`;
+    }
         reportCard.innerHTML = `
             <section class="report-details">
                 <h3 class="report-type">${report.faultType}</h3>
@@ -195,8 +195,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    let allReports = [];
-    allReports = await fetchReports(); 
     displayReports(sortReports(allReports, sortReportsDropdown.value)); 
 
     console.log('myReportsPage.js נטען במלואו.');
