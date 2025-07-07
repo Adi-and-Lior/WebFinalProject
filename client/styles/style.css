@@ -834,8 +834,10 @@ textarea:focus{
     display: flex; 
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
-    margin-right: 370px;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+
 }
 .delete-report-button .trash-icon {
     width: 40px; 
