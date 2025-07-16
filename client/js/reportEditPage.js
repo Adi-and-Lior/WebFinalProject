@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         mediaContainer.innerHTML = '';  // ניקוי לפני הוספה
 
         if (report.media) {
-            const mediaUrl = `${backendBaseUrl}/uploads/${report.media}`;
+            const mediaUrl = `${backendBaseUrl}/api/media/${report.media}`;
             if (/\.(jpeg|jpg|gif|png)$/i.test(report.media)) {
                 const img = document.createElement('img');
                 img.src = mediaUrl;

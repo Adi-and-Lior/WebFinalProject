@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         /* ----- מדיה ----- */
         mediaContainer.innerHTML = '';
         if (report.media) {
-            const mediaUrl = `${BASE_URL}/uploads/${report.media}`;   // <‑‑ כתובת מלאה
+            const mediaUrl = `${BASE_URL}/api/media/${report.media}`;   // <‑‑ כתובת מלאה
             if (/\.(jpeg|jpg|gif|png|webp)$/i.test(report.media)) {
                 const img = document.createElement('img');
                 img.src   = mediaUrl;

@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         /* ----- טעינת מדיה ----- */
         mediaContainer.innerHTML = '';           // ניקוי קודם
         if (report.media) {
-            const mediaUrl = `${BASE_URL}/uploads/${report.media}`;   // <‑‑ שימוש ב‑BASE_URL
+            const mediaUrl = `${BASE_URL}/api/media/${report.media}`;  // <‑‑ שימוש ב‑BASE_URL
             if (/\.(jpeg|jpg|gif|png|webp)$/i.test(report.media)) {
                 const img = document.createElement('img');
                 img.src   = mediaUrl;
