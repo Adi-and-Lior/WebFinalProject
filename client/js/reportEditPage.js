@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const backendBaseUrl = 'https://webfinalproject-j4tc.onrender.com';
 
     try {
-        const response = await fetch(`/api/reports/${reportId}`);
+        const response = await fetch(`${backendBaseUrl}/api/reports/${reportId}`);
         if (!response.ok) {
             if (response.status === 404) throw new Error('דיווח לא נמצא.');
             throw new Error(`שגיאה בשליפת דיווח: ${response.statusText}`);
