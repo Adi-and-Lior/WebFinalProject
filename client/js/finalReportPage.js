@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     /* ---------- הצגת נתוני הדוח ---------- */
-    function populateReportData(report) {
+    async function populateReportData(report) {
         displayFaultType.textContent = report.faultType || 'לא ידוע';
 
         /* מיקום */
@@ -76,25 +76,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         /* ----- מדיה ----- */
         mediaContainer.innerHTML = '';
         if (report.media) {
-            const mediaUrl = `${BASE_URL}/api/media/${report.media}`;   // <‑‑ כתובת מלאה
-            if (/\.(jpeg|jpg|gif|png|webp)$/i.test(report.media)) {
-                const img = document.createElement('img');
-                img.src   = mediaUrl;
-                img.alt   = 'תמונה מצורפת לדיווח';
-                img.style.maxWidth = '100%';
-                img.style.height   = 'auto';
-                mediaContainer.appendChild(img);
-            } else if (/\.(mp4|webm|ogg)$/i.test(report.media)) {
-                const video = document.createElement('video');
-                video.src   = mediaUrl;
-                video.controls = true;
-                video.style.maxWidth = '100%';
-                video.style.height   = 'auto';
-                mediaContainer.appendChild(video);
-            } else {
-                mediaContainer.textContent = 'קובץ מדיה לא נתמך.';
-            }
+    const mediaUrl = `${BASE_URL}/api/media/${report.media}`;
+    try {
+        const headResponse = await fetch(mediaUrl, { method: 'HEAD' });
+        if (!headResponse.ok) throw new Error('שגיאה בקבלת מידע על המדיה');
+
+        const contentType = headResponse.headers.get('Content-Type') || '';
+        console.log('Media Content-Type:', contentType);
+
+        if (contentType.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = mediaUrl;
+            img.alt = 'תמונה מצורפת לדיווח';
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+            mediaContainer.appendChild(img);
+        } else if (contentType.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = mediaUrl;
+            video.controls = true;
+            video.style.maxWidth = '100%';
+            video.style.height = 'auto';
+            mediaContainer.appendChild(video);
+        } else {
+            mediaContainer.textContent = 'קובץ מדיה לא נתמך.';
         }
+    } catch (error) {
+        console.error('Error loading media:', error);
+        mediaContainer.textContent = 'שגיאה בטעינת המדיה.';
+    }
+}
+
 
         /* ----- סטטוס ----- */
         const normalizedStatus = (report.status || '').toLowerCase().replace(/_/g, '-');

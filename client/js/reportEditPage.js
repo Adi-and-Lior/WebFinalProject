@@ -60,26 +60,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         const mediaContainer = document.getElementById('mediaContainer');
         mediaContainer.innerHTML = '';  // ניקוי לפני הוספה
 
+        console.log('Media filename:', report.media);
         if (report.media) {
-            const mediaUrl = `${backendBaseUrl}/api/media/${report.media}`;
-            if (/\.(jpeg|jpg|gif|png)$/i.test(report.media)) {
-                const img = document.createElement('img');
-                img.src = mediaUrl;
-                img.alt = 'תמונה מצורפת לדיווח';
-                img.style.maxWidth = '100%';
-                mediaContainer.appendChild(img);
-            } else if (/\.(mp4|webm|ogg)$/i.test(report.media)) {
-                const video = document.createElement('video');
-                video.src = mediaUrl;
-                video.controls = true;
-                video.style.maxWidth = '100%';
-                mediaContainer.appendChild(video);
-            } else {
-                mediaContainer.textContent = 'קובץ מדיה לא נתמך.';
-            }
+    const mediaUrl = `${backendBaseUrl}/api/media/${report.media}`;
+
+    try {
+        // שולח בקשת HEAD כדי לקבל רק את הכותרות, לא את התוכן
+        const headResponse = await fetch(mediaUrl, { method: 'HEAD' });
+        if (!headResponse.ok) throw new Error('שגיאה בקבלת מדיה');
+
+        const contentType = headResponse.headers.get('Content-Type');
+        console.log('Media Content-Type:', contentType);
+
+        mediaContainer.innerHTML = ''; // ניקוי קודם
+
+        if (contentType && contentType.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = mediaUrl;
+            img.alt = 'תמונה מצורפת לדיווח';
+            img.style.maxWidth = '100%';
+            mediaContainer.appendChild(img);
+        } else if (contentType && contentType.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = mediaUrl;
+            video.controls = true;
+            video.style.maxWidth = '100%';
+            mediaContainer.appendChild(video);
         } else {
-            mediaContainer.textContent = 'אין מדיה מצורפת.';
+            mediaContainer.textContent = 'קובץ מדיה לא נתמך.';
         }
+    } catch (err) {
+        console.error('Error loading media:', err);
+        mediaContainer.textContent = 'שגיאה בטעינת המדיה.';
+    }
+} else {
+    mediaContainer.textContent = 'אין מדיה מצורפת.';
+}
 
         let normalizedStatus = (report.status || '').toLowerCase().replace(/_/g, '-');
         const statusHebrew = statusTranslations[normalizedStatus] || 'לא ידוע';
