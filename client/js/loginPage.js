@@ -2,20 +2,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginForm     = document.querySelector('.login-form');
   const usernameInput = document.getElementById('username');
   const passwordInput = document.getElementById('password');
+  
   // קוראים את selectedUserType מ-localStorage בתחילת הטעינה של דף הלוגין
   // זה בסדר גמור, זה הערך שאמור להישלח לשרת.
   const selectedUserType = localStorage.getItem('selectedUserType');
   const API_BASE_LOGIN = 'https://webfinalproject-j4tc.onrender.com/api/login';
   console.log('Selected user type on the login page:', selectedUserType);
-
+  console.log('Login page script loaded');
+  console.log('loginForm:', loginForm);
   if (!loginForm) {
     console.warn("טופס התחברות לא נמצא. וודא שקיים אלמנט עם class 'login-form'.");
     return;
   }
 
   loginForm.addEventListener('submit', async event => {
+    console.log('Submit event triggered');
     event.preventDefault();
-
     const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
 

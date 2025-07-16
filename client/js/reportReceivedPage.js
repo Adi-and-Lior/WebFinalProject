@@ -49,7 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // וודא שננקה כל מדיה קודמת לפני הוספת החדשה
     // הסתר את אלמנט ה-img preview המקורי
-    mediaPreview.style.display = 'none';
+// ננקה את התמונה הקודמת (הסר src), אבל לא נסתר אותה
+    mediaPreview.src = '';
     // אם יש כבר אלמנט וידאו קודם, הסר אותו (חשוב במקרה של ניווט לדף הזה שוב)
     let existingVideoElement = document.getElementById('reportMediaVideoPreview');
     if (existingVideoElement) {
