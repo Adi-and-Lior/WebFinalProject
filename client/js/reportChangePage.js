@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /* ---------- DOM Elements ---------- */
     const reportsTitleElement   = document.querySelector('.reports-title h1');
-    const reportNumberDisplay   = document.getElementById('reportNumberDisplay');
+    const reportNumberDisplayElement = document.getElementById('reportNumberDisplay');
     const backButton            = document.getElementById('backButton');
 
     const displayFaultType      = document.getElementById('displayFaultType');
@@ -174,8 +174,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Report ID is missing from the URL.');
         return;
     }
-    if (reportNumberDisplay) {
-        reportsTitleElement.textContent = `דיווח #${reportId.slice(-4)}`;
+    if (reportNumberDisplayElement) {
+        reportNumberDisplayElement.textContent = `${reportId.slice(-4)}`;
     }
 
     /* הרשאות עריכה */

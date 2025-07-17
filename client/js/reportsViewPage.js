@@ -46,7 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         card.innerHTML = `
             <section class="report-info">
-                <span class="report-id-type">דיווח #${displayId}
+                <span class="report-id-word">דיווח #</span>
+                <span class="report-id-type">${displayId}
                 <span class="report-type-name">${report.faultType}</span></span>
             </section>
             <a href="/html/reportEditPage.html?id=${report._id}&seq=${displayId}" class="view-details-link">צפייה בפרטים</a>

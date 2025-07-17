@@ -10,8 +10,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Report ID is missing from the URL.');
         return;
     }
-
-    reportsTitleElement.textContent = `דיווח #${reportId.slice(-4)}`;
+    const reportNumberDisplayElement = document.getElementById('reportNumberDisplay');
+    if (reportNumberDisplayElement) {
+        reportNumberDisplayElement.textContent = `${reportId.slice(-4)}`;
+    }
 
     const statusTranslations = {
         'in-progress': 'בטיפול',

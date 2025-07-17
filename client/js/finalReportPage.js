@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /* ---------- DOM Elements ---------- */
     const reportsTitleElement        = document.querySelector('.reports-title h1');
-    const reportNumberDisplay        = document.getElementById('reportNumberDisplay');
+    const reportNumberDisplayElement = document.getElementById('reportNumberDisplay');
     const backToHomeButton           = document.getElementById('backToHomeButton');
 
     const displayFaultType           = document.getElementById('displayFaultType');
@@ -133,7 +133,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const currentReport = await fetchReportDetails(reportId);
     if (currentReport) {
-        if (reportsTitleElement) reportsTitleElement.textContent = `דיווח #${reportId.slice(-4)}`;
+        if (reportNumberDisplayElement) {
+        reportNumberDisplayElement.textContent = `${reportId.slice(-4)}`;
+        }
         populateReportData(currentReport);
     } else {
         reportsTitleElement.textContent = 'שגיאה בטעינת דיווח';
