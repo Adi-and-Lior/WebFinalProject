@@ -47,6 +47,87 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUsername = 'Anonymous';
     let currentUserId = 'anonymous';
 
+const LOCAL_API_BASE_URL = "https://webfinalproject-j4tc.onrender.com/api"; // הנתיב לשרת ה-Node.js שלך
+let citiesData = [];
+let streetsData = [];
+
+// קריאה לטעינת הערים מהשרת שלך
+async function loadCities() {
+    try {
+        // שים לב: הבקשה נשלחת לשרת ה-Node.js המקומי שלך
+        const res = await fetch(`${LOCAL_API_BASE_URL}/cities`);
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        // השרת שלך כבר טיפל בסינון כפילויות, אבל אפשר להשאיר את זה כאן כבטיחות
+        citiesData = data.filter((v, i, a) => a.indexOf(v) === i);
+        populateCityDatalist();
+    } catch (err) {
+        console.error("שגיאה בטעינת ערים:", err);
+    }
+}
+
+// קריאה לטעינת רחובות עבור עיר מסוימת מהשרת שלך
+async function loadStreetsForCity(cityName) {
+    try {
+        // שים לב: הבקשה נשלחת לשרת ה-Node.js המקומי שלך עם שם העיר כפרמטר
+        const res = await fetch(`${LOCAL_API_BASE_URL}/streets?city=${encodeURIComponent(cityName)}`);
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        // השרת שלך כבר טיפל בסינון כפילויות, אבל אפשר להשאיר את זה כאן כבטיחות
+        streetsData = data.filter((v, i, a) => a.indexOf(v) === i);
+        populateStreetDatalist();
+    } catch (err) {
+        console.error("שגיאה בטעינת רחובות:", err);
+    }
+}
+
+function populateStreetDatalist() {
+    const streetListElement = document.getElementById("streetList");
+    if (!streetListElement) {
+        console.error("Element with id 'streetList' not found.");
+        return;
+    }
+    streetListElement.innerHTML = '';
+    streetsData.forEach(street => {
+        const option = document.createElement("option");
+        option.value = street;
+        streetListElement.appendChild(option);
+    });
+}
+
+function populateCityDatalist() {
+    const cityListElement = document.getElementById("cityList");
+    if (!cityListElement) {
+        console.error("Element with id 'cityList' not found.");
+        return;
+    }
+    cityListElement.innerHTML = '';
+    citiesData.forEach(city => {
+        const option = document.createElement("option");
+        option.value = city;
+        cityListElement.appendChild(option);
+    });
+}
+
+// קבלת הפניה לאלמנט הקלט של העיר (ודא שיש לך ID "cityInput" ב-HTML)
+if (cityInput) {
+    cityInput.addEventListener('change', () => {
+        const selectedCity = cityInput.value.trim();
+        if (selectedCity) {
+            loadStreetsForCity(selectedCity);
+        }
+    });
+} else {
+    console.error("Element with id 'cityInput' not found. Ensure your HTML has an input with this ID.");
+}
+
+// טעינה ראשונית של הערים עם פתיחת הדף
+loadCities();
+
     if (loggedInUser) {
         currentUsername = loggedInUser.username;
         currentUserId = loggedInUser.userId;
