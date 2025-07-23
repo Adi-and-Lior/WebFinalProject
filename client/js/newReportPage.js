@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const backButton = document.getElementById('backButton');
     const reportForm = document.querySelector('.report-form');
     const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api';
+
     // Fault type elements
     const faultTypeSelect = document.getElementById('fault-type');
     const faultDescriptionTextarea = document.getElementById('fault-description');
@@ -17,10 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const manualAddressSection = document.getElementById('manualAddressSection');
     const cityInput = document.getElementById('cityInput');
     const streetInput = document.getElementById('streetInput');
-    const houseNumberInput = document.getElementById('houseNumberInput'); // Corrected typo here
+    const houseNumberInput = document.getElementById('houseNumberInput');
     const locationStatusIcon = locationSelect.closest('.input-container').querySelector('.asterisk');
     const cityStatusIcon = cityInput.closest('.input-container').querySelector('.asterisk');
     const streetStatusIcon = streetInput.closest('.input-container').querySelector('.asterisk');
+    const houseNumberStatusIcon = houseNumberInput ? houseNumberInput.closest('.input-container').querySelector('.asterisk') : null;
+
 
     // Media upload elements
     const uploadSelect = document.getElementById('upload');
@@ -47,93 +50,124 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUsername = 'Anonymous';
     let currentUserId = 'anonymous';
 
-const LOCAL_API_BASE_URL = "https://webfinalproject-j4tc.onrender.com/api"; // הנתיב לשרת ה-Node.js שלך
-let citiesData = [];
-let streetsData = [];
+    const LOCAL_API_BASE_URL = "https://webfinalproject-j4tc.onrender.com/api";
+    let citiesData = [];
+    let streetsData = [];
 
-// קריאה לטעינת הערים מהשרת שלך
-async function loadCities() {
-    try {
-        // שים לב: הבקשה נשלחת לשרת ה-Node.js המקומי שלך
-        const res = await fetch(`${LOCAL_API_BASE_URL}/cities`);
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+    // קריאה לטעינת הערים מהשרת שלך
+    async function loadCities() {
+        console.log("loadCities: --- STARTING CITY LOAD ---");
+        try {
+            console.log(`loadCities: Fetching from ${LOCAL_API_BASE_URL}/cities`);
+            const res = await fetch(`${LOCAL_API_BASE_URL}/cities`);
+            if (!res.ok) {
+                console.error(`loadCities: HTTP error! status: ${res.status}`);
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            const data = await res.json();
+            console.log("loadCities: Raw data received:", data);
+            citiesData = data.filter((v, i, a) => a.indexOf(v) === i); // סינון כפילויות
+            console.log("loadCities: Filtered citiesData:", citiesData);
+            populateCityDatalist();
+            console.log("loadCities: Cities fetched and populated.");
+        } catch (err) {
+            console.error("loadCities: Error fetching cities:", err);
+        } finally {
+            console.log("loadCities: --- FINISHED CITY LOAD ---");
         }
-        const data = await res.json();
-        // השרת שלך כבר טיפל בסינון כפילויות, אבל אפשר להשאיר את זה כאן כבטיחות
-        citiesData = data.filter((v, i, a) => a.indexOf(v) === i);
-        populateCityDatalist();
-    } catch (err) {
-        console.error("שגיאה בטעינת ערים:", err);
     }
-}
 
-// קריאה לטעינת רחובות עבור עיר מסוימת מהשרת שלך
-async function loadStreetsForCity(cityName) {
-    try {
-        // שים לב: הבקשה נשלחת לשרת ה-Node.js המקומי שלך עם שם העיר כפרמטר
-        const res = await fetch(`${LOCAL_API_BASE_URL}/streets?city=${encodeURIComponent(cityName)}`);
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+    // קריאה לטעינת רחובות עבור עיר מסוימת מהשרת שלך
+    async function loadStreetsForCity(cityName) {
+        console.log(`loadStreetsForCity: --- STARTING STREET LOAD for city: '${cityName}' ---`);
+        // --- שלב 1: איפוס מצב הרחובות הנוכחי ---
+        streetsData = []; // נקה את מערך הנתונים של הרחובות
+        populateStreetDatalist(); // עדכן את ה-datalist ב-HTML לריק (כדי לנקות הצעות קודמות)
+        streetInput.value = ''; // נקה את הערך בשדה הקלט של הרחוב
+        console.log(`loadStreetsForCity: Resetting streets for new city selection. current streetInput.value: '${streetInput.value}'`);
+
+        // --- שלב 2: בדיקה אם יש עיר לבצע עבורה חיפוש ---
+        if (!cityName) {
+            console.log("loadStreetsForCity: City name is empty, skipping API call for streets.");
+            console.log("loadStreetsForCity: --- FINISHED STREET LOAD (empty city) ---");
+            return; // אל תבצע קריאת API אם אין עיר נבחרת
         }
-        const data = await res.json();
-        // השרת שלך כבר טיפל בסינון כפילויות, אבל אפשר להשאיר את זה כאן כבטיחות
-        streetsData = data.filter((v, i, a) => a.indexOf(v) === i);
-        populateStreetDatalist();
-    } catch (err) {
-        console.error("שגיאה בטעינת רחובות:", err);
-    }
-}
 
-function populateStreetDatalist() {
-    const streetListElement = document.getElementById("streetList");
-    if (!streetListElement) {
-        console.error("Element with id 'streetList' not found.");
-        return;
+        // --- שלב 3: ביצוע קריאת ה-API ועדכון הנתונים ---
+        console.log(`loadStreetsForCity: Fetching from ${LOCAL_API_BASE_URL}/streets?city=${encodeURIComponent(cityName)}`);
+        try {
+            const res = await fetch(`${LOCAL_API_BASE_URL}/streets?city=${encodeURIComponent(cityName)}`);
+            if (!res.ok) {
+                console.error(`loadStreetsForCity: HTTP error! status: ${res.status}`);
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            const data = await res.json();
+            console.log("loadStreetsForCity: Raw data received:", data);
+            streetsData = data.filter((v, i, a) => a.indexOf(v) === i); // סינון כפילויות
+            populateStreetDatalist(); // עדכן את ה-datalist עם הרחובות החדשים
+            console.log(`loadStreetsForCity: Streets fetched and populated for '${cityName}':`, streetsData);
+        } catch (err) {
+            console.error(`loadStreetsForCity: Error fetching streets for '${cityName}':`, err);
+        } finally {
+            console.log("loadStreetsForCity: --- FINISHED STREET LOAD ---");
+        }
     }
-    streetListElement.innerHTML = '';
-    streetsData.forEach(street => {
-        const option = document.createElement("option");
-        option.value = street;
-        streetListElement.appendChild(option);
-    });
-}
 
-function populateCityDatalist() {
-    const cityListElement = document.getElementById("cityList");
-    if (!cityListElement) {
-        console.error("Element with id 'cityList' not found.");
-        return;
+    function populateStreetDatalist() {
+        const streetListElement = document.getElementById("streetList");
+        if (!streetListElement) {
+            console.error("populateStreetDatalist: Element with id 'streetList' not found.");
+            return;
+        }
+        streetListElement.innerHTML = ''; // נקה את כל האופציות הקיימות
+        if (streetsData.length === 0) {
+            console.log("populateStreetDatalist: No streets to populate, datalist will be empty.");
+        }
+        streetsData.forEach(street => {
+            const option = document.createElement("option");
+            option.value = street;
+            streetListElement.appendChild(option);
+        });
+        console.log(`populateStreetDatalist: Datalist updated with ${streetsData.length} streets. Options added:`, streetsData);
     }
-    cityListElement.innerHTML = '';
-    citiesData.forEach(city => {
-        const option = document.createElement("option");
-        option.value = city;
-        cityListElement.appendChild(option);
-    });
-}
 
-// קבלת הפניה לאלמנט הקלט של העיר (ודא שיש לך ID "cityInput" ב-HTML)
-if (cityInput) {
-    cityInput.addEventListener('change', () => {
-        const selectedCity = cityInput.value.trim();
-        if (selectedCity) {
+    function populateCityDatalist() {
+        const cityListElement = document.getElementById("cityList");
+        if (!cityListElement) {
+            console.error("populateCityDatalist: Element with id 'cityList' not found.");
+            return;
+        }
+        cityListElement.innerHTML = '';
+        citiesData.forEach(city => {
+            const option = document.createElement("option");
+            option.value = city;
+            cityListElement.appendChild(option);
+        });
+        console.log(`populateCityDatalist: Datalist updated with ${citiesData.length} cities. Options added:`, citiesData); // Added for debugging
+    }
+
+    // קבלת הפניה לאלמנט הקלט של העיר (ודא שיש לך ID "cityInput" ב-HTML)
+    if (cityInput) {
+        cityInput.addEventListener('input', () => { // *** זהו השינוי הקריטי עבור חווית המשתמש הדינמית ***
+            const selectedCity = cityInput.value.trim();
+            console.log(`cityInput 'input' event: Value changed to '${selectedCity}'`);
+            // אין צורך לאפס רחובות כאן, זה כבר מטופל בתוך loadStreetsForCity
             loadStreetsForCity(selectedCity);
-        }
-    });
-} else {
-    console.error("Element with id 'cityInput' not found. Ensure your HTML has an input with this ID.");
-}
+            updateStatusIcon(cityInput, cityStatusIcon);
+        });
+    } else {
+        console.error("cityInput: Element with id 'cityInput' not found. Ensure your HTML has an input with this ID.");
+    }
 
-// טעינה ראשונית של הערים עם פתיחת הדף
-loadCities();
+    // טעינה ראשונית של הערים עם פתיחת הדף
+    loadCities();
 
     if (loggedInUser) {
         currentUsername = loggedInUser.username;
         currentUserId = loggedInUser.userId;
         console.log('Logged-in user:', currentUsername, 'ID:', currentUserId);
     } else {
-        console.warn('No user logged in to localStorage.');
+        console.warn('No user logged in to localStorage. Redirecting...');
         alert('שגיאה: משתמש לא מחובר. אנא התחבר שוב.');
         window.location.href = '../index.html';
     }
@@ -198,14 +232,26 @@ loadCities();
     // Handle location selection and related icons
     function handleLocationSelection() {
         const selectedLocationType = locationSelect.value;
+        console.log(`handleLocationSelection: Selected location type: ${selectedLocationType}`);
 
         if (selectedLocationType === 'loc2') { // Manual location entry
             manualAddressSection.style.display = 'block';
             cityInput.setAttribute('required', 'true');
             streetInput.setAttribute('required', 'true');
+            houseNumberInput.removeAttribute('required'); // ודא שאינו חובה אם לא מוגדר כך ב-HTML
+            
+            // טען רחובות אם יש כבר עיר בקלט (למקרה שהמשתמש עבר בין אפשרויות)
+            // קריאה זו תפעיל את האיפוס בתוך loadStreetsForCity
+            loadStreetsForCity(cityInput.value.trim());
 
             updateStatusIcon(cityInput, cityStatusIcon);
             updateStatusIcon(streetInput, streetStatusIcon);
+            if (houseNumberInput.hasAttribute('required') && houseNumberStatusIcon) {
+                updateStatusIcon(houseNumberInput, houseNumberStatusIcon);
+            } else if (houseNumberStatusIcon) {
+                houseNumberStatusIcon.src = ASTERISK_ICON_PATH;
+            }
+
 
             currentLat = null;
             currentLon = null;
@@ -217,22 +263,35 @@ loadCities();
             cityInput.value = '';
             streetInput.removeAttribute('required');
             streetInput.value = '';
+            houseNumberInput.removeAttribute('required'); 
             houseNumberInput.value = '';
+
+            // איפוס רשימת הרחובות והקלט שלהם כאשר עוברים למיקום נוכחי
+            streetsData = [];
+            populateStreetDatalist();
 
             if (cityStatusIcon) cityStatusIcon.src = ASTERISK_ICON_PATH;
             if (streetStatusIcon) streetStatusIcon.src = ASTERISK_ICON_PATH;
+            if (houseNumberStatusIcon) houseNumberStatusIcon.src = ASTERISK_ICON_PATH;
+
 
             getCurrentLocation();
-        } else { 
+        } else { // No location selected
             manualAddressSection.style.display = 'none';
             cityInput.removeAttribute('required');
             cityInput.value = '';
             streetInput.removeAttribute('required');
             streetInput.value = '';
+            houseNumberInput.removeAttribute('required'); 
             houseNumberInput.value = '';
+
+            // איפוס רשימת הרחובות והקלט שלהם כאשר לא נבחרה אפשרות
+            streetsData = [];
+            populateStreetDatalist();
 
             if (cityStatusIcon) cityStatusIcon.src = ASTERISK_ICON_PATH;
             if (streetStatusIcon) streetStatusIcon.src = ASTERISK_ICON_PATH;
+            if (houseNumberStatusIcon) houseNumberStatusIcon.src = ASTERISK_ICON_PATH;
 
             currentLat = null;
             currentLon = null;
@@ -251,28 +310,29 @@ loadCities();
             return;
         }
 
+        console.log("getCurrentLocation: Attempting to get current position...");
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 currentLat = position.coords.latitude;
                 currentLon = position.coords.longitude;
-                console.log(`Current Location: Lat ${currentLat}, Lon ${currentLon}`);
+                console.log(`getCurrentLocation: Current Location: Lat ${currentLat}, Lon ${currentLon}`);
 
                 try {
                     const apiKey = 'AIzaSyBnRHLdYCyHCyCZA30LeDv468lFXEvgbvA';
                     const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLat},${currentLon}&key=${apiKey}`);
                     const data = await response.json();
+                    console.log("getCurrentLocation: Geocoding API response:", data);
 
                     if (data.status === 'OK' && data.results.length > 0) {
                         locationString = data.results[0].formatted_address;
                         
-                        // חיפוש העיר מתוך רכיבי הכתובת
                         const addressComponents = data.results[0].address_components;
                         const cityComponent = addressComponents.find(component =>
                             component.types.includes('locality') || component.types.includes('administrative_area_level_1')
                         );
                         currentCity = cityComponent ? cityComponent.long_name : '';
 
-                        console.log("Resolved address:", locationString, "City:", currentCity);
+                        console.log("getCurrentLocation: Resolved address:", locationString, "City:", currentCity);
                         alert(`Location detected: ${locationString}`);
                     } else {
                         locationString = `Lat: ${currentLat}, Lon: ${currentLon}`;
@@ -280,14 +340,14 @@ loadCities();
                         alert("Location detected, but could not convert to full address.");
                     }
                 } catch (err) {
-                    console.error("Geocoding error:", err);
+                    console.error("getCurrentLocation: Geocoding error:", err);
                     locationString = `Lat: ${currentLat}, Lon: ${currentLon}`;
                     currentCity = '';
                     alert("Location detected, but failed to get full address.");
                 }
             },
             (error) => {
-                console.error("Error getting current location:", error);
+                console.error("getCurrentLocation: Error getting current location:", error);
                 let errorMessage = "An error occurred while detecting the location.";
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
@@ -322,7 +382,7 @@ loadCities();
     // Media upload handling and camera code
     function updateMediaUploadVisibility() {
         const selectedUploadOption = uploadSelect.value;
-        console.log('Upload option selected:', selectedUploadOption);
+        console.log('updateMediaUploadVisibility: Upload option selected:', selectedUploadOption);
 
         mediaUploadSection.style.display = 'none';
         mediaFileInput.removeAttribute('required');
@@ -357,7 +417,7 @@ loadCities();
             updateStatusIcon(mediaFileInput, mediaFileStatusIcon);
 
         }
-        console.log('Media file field required:', mediaFileInput.hasAttribute('required'));
+        console.log('updateMediaUploadVisibility: Media file field required:', mediaFileInput.hasAttribute('required'));
         updateStatusIcon(uploadSelect, uploadStatusIcon);
     }
 
@@ -367,9 +427,9 @@ loadCities();
             stream = await navigator.mediaDevices.getUserMedia({ video: true });
             video.srcObject = stream;
             video.play();
-            console.log("Camera started successfully.");
+            console.log("startCamera: Camera started successfully.");
         } catch (err) {
-            console.error('Error accessing camera:', err);
+            console.error('startCamera: Error accessing camera:', err);
             alert('Cannot enable camera: ' + err.message + '\nPlease ensure you have a camera connected and allow access to it in your browser settings.');
             uploadSelect.value = '';
             updateMediaUploadVisibility();
@@ -380,13 +440,13 @@ loadCities();
         if (stream) {
             stream.getTracks().forEach(track => {
                 track.stop();
-                console.log("Camera track stopped.");
+                console.log("stopCamera: Camera track stopped.");
             });
             stream = null;
         }
         video.srcObject = null;
         video.pause();
-        console.log("Camera stopped.");
+        console.log("stopCamera: Camera stopped.");
     }
 
     if (captureButton) {
@@ -438,7 +498,11 @@ loadCities();
         handleLocationSelection();
     }
     if (cityInput) {
-        cityInput.addEventListener('input', () => {
+        cityInput.addEventListener('input', () => { // *** זהו השינוי הקריטי עבור חווית המשתמש הדינמית ***
+            const selectedCity = cityInput.value.trim();
+            console.log(`cityInput 'input' event: Value changed to '${selectedCity}'`);
+            // אין צורך לאפס רחובות כאן, זה כבר מטופל בתוך loadStreetsForCity
+            loadStreetsForCity(selectedCity);
             updateStatusIcon(cityInput, cityStatusIcon);
         });
     }
@@ -447,6 +511,14 @@ loadCities();
             updateStatusIcon(streetInput, streetStatusIcon);
         });
     }
+    if (houseNumberInput) {
+        houseNumberInput.addEventListener('input', () => {
+            if (houseNumberStatusIcon) {
+                updateStatusIcon(houseNumberInput, houseNumberStatusIcon);
+            }
+        });
+    }
+
     if (uploadSelect) {
         uploadSelect.addEventListener('change', updateMediaUploadVisibility);
         updateMediaUploadVisibility();
@@ -488,7 +560,7 @@ loadCities();
                 }
                 locationData = {
                     type: 'current',
-                    city: currentCity || '',       // <-- הוספת שדה העיר כאן
+                    city: currentCity || '',
                     latitude: currentLat,
                     longitude: currentLon,
                     address: locationString || ''
