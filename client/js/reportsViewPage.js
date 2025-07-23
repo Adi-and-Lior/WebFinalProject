@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             p.textContent = 'אין דיווחים רלוונטיים להצגה.';
             p.style.textAlign = 'center';
             p.style.marginTop = '20px';
+            p.style.fontSize = '40px';
             reportsDisplayArea.appendChild(p);
             return;
         }

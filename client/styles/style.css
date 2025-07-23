@@ -416,7 +416,7 @@ Header{
   align-items: center;
 }
 .form-label {
-    font-size: 35px;
+    font-size: 40px;
     font-weight: bold;
     color: #333;
 }
@@ -441,7 +441,7 @@ Header{
     border-radius: 10px;
 }
 .input-container input{
-  font-size: 30px;
+  font-size: 40px;
   height: 50px; 
   width: 20px;
   padding: 4px 8px;
@@ -450,26 +450,26 @@ Header{
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    height: 25px; 
+    height: 32px; 
     padding-right: 15px;
 }
 #media-file{
-  font-size: 20px;   
-  padding-left:  400px;   
+  font-size: 40px;   
+  padding-left:  800px;   
   padding-top: 20px;
 }
 .asterisk {
-    height: 24px;
+    height: 35px;
     margin-right: 5px;
 }
 .input-with-inside-icons select {
     width: 900px;
-    padding: 12px 45px 12px 15px; 
+    padding: 12px 65px 12px 15px; 
     border: none;
     background-color: transparent;
     color: #333;
     cursor: pointer;
-    font-size: 30px;
+    font-size: 40px;
 }
 .input-with-inside-icons:focus-within {
     border-color: #00BCD4; 
@@ -478,7 +478,6 @@ select {
   outline: none;
   box-shadow: none;
   border: none;
-
 }   
 .report-form textarea {
     margin-top: 30px;
@@ -499,24 +498,25 @@ textarea:focus{
     border: 1px solid #00BCD4;
 }
 .description-hint {
-    font-size: 30px;
+    font-size: 40px;
     color: #666;
     margin-top: 5px;
     line-height: 1.5;
 }
 .submit-button {
-    width: 200px;
+    width: 250px;
     height: 50px;
     background: #41D2CF;
     color: #266686;
     padding: 15px 30px;
     border: none;
     border-radius: 30px;
-    font-size: 30px;
+    font-size: 45px;
     font-weight: bold;
     cursor: pointer;
     margin-top: 20px;
-    margin-right: 380px;
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     align-items: center;  
     justify-content: center; 
@@ -536,7 +536,7 @@ textarea:focus{
     display: none; 
     width: 200px;
     height: 40px;
-    font-size: 30px;
+    font-size: 40px;
     margin-right: 100px; 
     cursor: pointer;
 }
@@ -608,7 +608,7 @@ textarea:focus{
 }
 .detail-item h3 {
     color: #000000;
-    font-size: 35px;
+    font-size: 40px;
     font-weight: bold;
     text-align: right;
     flex-shrink: 0;
@@ -620,11 +620,15 @@ textarea:focus{
     color: #000000;
     flex-grow: 1;
     text-align: right;
-    font-size: 35px;
+    font-size: 40px;
     font-weight: normal;
     white-space: normal; /* מאפשר לטקסט לרדת שורה */
     overflow-wrap: break-word; /* מבטיח שמילים ארוכות יירדו שורה במידת הצורך */
     display: inline;
+}
+.edit-icon{
+    height: 35px;
+    margin-right: 5px;
 }
 .uploaded-media-preview {
     width: 200px;
@@ -700,7 +704,7 @@ textarea:focus{
   margin-bottom: 20px;
 }
 .filters-title {
-    font-size: 30px;
+    font-size: 40px;
     font-weight: bold;
     color: #266686;
     margin-bottom: 15px;
@@ -722,7 +726,7 @@ textarea:focus{
 .sort-dropdown {
     width: 100%;
     padding: 12px 20px; 
-    font-size: 28px;  
+    font-size: 40px;  
     color: #333;
     border: none; 
     cursor: pointer;
@@ -760,22 +764,24 @@ textarea:focus{
     cursor: pointer;
 }
 .report-image-wrapper {
+    display: flex; 
+    justify-content: center;
+    align-items: center;
     flex-shrink: 0;
-    width: 90px;
-    height: 90px;
+    width: 180px;
+    height: 180px;
     border-radius: 10px;
     overflow: hidden;
-    margin-right: 40px;
+    margin-right: auto;
     text-align: right;
-    margin-top: 60px;
-}
+    margin-left: 150px;
+    margin-top: auto;
+    margin-bottom: auto;
+}   
 .report-thumbnail {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-.report-details {
-    white-space: nowrap;
 }
 .report-type {
     font-size: 40px;
@@ -813,19 +819,14 @@ textarea:focus{
     background-position: left 20px center; 
     background-size: 24px; 
 }
-.report-image-wrapper {
-    display: flex; 
-    justify-content: center;
-    align-items: center;
-}
 .no-reports-message {
     text-align: center;
     color: #666;
     font-size: 24px;
     margin-top: 50px;
 }
-#displayMedia{
-    width: 25px; 
+#displayMedia img{
+    width: 200px; 
 }
 .delete-report-button {
     background: none; 
@@ -835,9 +836,7 @@ textarea:focus{
     display: flex; 
     justify-content: center;
     align-items: center;
-    margin-right: auto;
     margin-top: auto;
-
 }
 .delete-report-button :hover{
     transform: scale(1.1);            
@@ -873,7 +872,7 @@ textarea:focus{
     padding: 15px 30px;
     border: none;
     border-radius: 30px;
-    font-size: 30px;
+    font-size: 40px;
     font-weight: bold;
     cursor: pointer;
     margin-top: 20px;
@@ -899,11 +898,10 @@ textarea:focus{
     background-color: transparent; 
     border: none; 
     border-radius: 10px; 
-    font-size: 30px; 
+    font-size: 45px; 
     font-weight: bold;
     color: #3F98B8; 
-    cursor: pointer; 
-    white-space: nowrap; 
+    cursor: pointer;  
     background-color: #EBFFF8;
 }
 .filter-button.active {
@@ -919,13 +917,14 @@ textarea:focus{
     background-color: #EBF7FB; 
     border-radius: 10px; 
     padding: 15px 20px; 
+    margin-bottom: 25px;
 }
 .report-info{
   display: flex;
   padding: 0px;
+  font-size: 40px;
 }
 .report-id-type {
-    font-size: 28px;
     font-weight: bold; 
     color: #000000; 
     white-space: nowrap; 
@@ -934,7 +933,6 @@ textarea:focus{
     padding: 0px;
 }
 .report-id-word {
-    font-size: 28px;
     font-weight: bold; 
     color: #000000; 
     white-space: nowrap; 
@@ -943,7 +941,7 @@ textarea:focus{
     padding: 0px;
 }
 .view-details-link {
-    font-size: 28px;
+    font-size: 40px;
     color: #076FCA; 
     text-decoration: none;
     font-weight: normal;
@@ -966,7 +964,7 @@ textarea:focus{
   padding: 8px;     
 }
 #mediaContainer img{
-  width: 200px;
+  width: 300px;
 }
 .detail-item textarea {
   font-size: 35px;
