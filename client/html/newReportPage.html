@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="icon" href="/images/favicon.png" type="image/x-icon">
 </head>
 <body class="Wrapper">
@@ -60,18 +61,20 @@
             </section>
             
             <section id="manualAddressSection" style="display: none;">
-                <label class="form-label" for="cityInput">עיר: <span class="required">(חובה)</span></label>
+                <label class="form-label" for="citySelect">עיר: <span class="required">(חובה)</span></label>
                 <section class="input-container">
                     <img class="asterisk" src="../images/asterisk.svg" alt="asterisk">
-                    <input class="input-with-inside-icons" type="text" id="cityInput" name="city" placeholder="הקלד עיר" list="cityList" />
-                    <datalist id="cityList"></datalist>
+                    <select id="citySelect" name="city" required>
+                    <option value="">בחר עיר</option>
+                    </select>
                 </section>
 
-                <label class="form-label" for="streetInput">רחוב: <span class="required">(חובה)</span></label>
+                <label class="form-label" for="streetSelect">רחוב: <span class="required">(חובה)</span></label>
                 <section class="input-container">
                     <img class="asterisk" src="../images/asterisk.svg" alt="asterisk">
-                    <input class="input-with-inside-icons" type="text" id="streetInput" name="street" placeholder="הקלד רחוב" list="streetList"/>
-                    <datalist id="streetList"></datalist>
+                    <select id="streetSelect" class="form-control" name="street" style="width: 100%;" required>
+                    <option disabled selected value="">בחר רחוב</option>
+                    </select>
                 </section>
 
                 <label class="form-label" for="houseNumberInput">מספר בית: <span class="optional">(לא חובה)</span></label>
@@ -112,6 +115,8 @@
             <button class="submit-button" type="submit">שליחה</button>
         </form>
     </main>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="../js/newReportPage.js"></script>
 </body>
 </html>
