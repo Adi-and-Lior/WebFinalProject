@@ -4,9 +4,12 @@
     <title>דיווח בטוח</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../styles/style.css">
 </head>
-<body>
+<body class="Wrapper">  
+    <header class="reports-title">
+        <h1>מפת הדיווחים :<span id="reportNumberDisplay"></span></h1>
+    </header>
     <div id="map"></div>
 
     <script>
@@ -38,6 +41,9 @@
         window.onload = loadGoogleMapsScript;
 
     </script>
-    <script src="map.js"></script>
+    <footer class="thank-you-footer">
+        <button id="homeButton">חזרה לעמוד הבית</button> 
+    </footer> 
+    <script src="../js/map.js"></script>
 </body>
 </html>

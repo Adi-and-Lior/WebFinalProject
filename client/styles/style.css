@@ -973,6 +973,10 @@ textarea:focus{
   box-sizing: border-box; 
   resize: vertical; 
 }
+#map {
+    height: calc(90vh - 300px);
+    width: 100%;                            
+}
 }
 
 

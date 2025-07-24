@@ -44,6 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLon = null;
     let locationString = '';
     let currentCity = ''; 
+    let manualLat = null; // חדש
+    let manualLon = null; // חדש
+    let manualFullAddress = ''; // חדש: לשמור את הכתובת המלאה המפוענחת
 
     // User info from localStorage
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -379,6 +382,42 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 
+    async function geocodeAddress(city, street, houseNumber) {
+    const address = `${houseNumber ? houseNumber + ' ' : ''}${street}, ${city}, Israel`; // בנה את הכתובת
+    const apiKey = 'AIzaSyBnRHLdYCyHCyCZA30LeDv468lFXEvgbvA'; // השתמש במפתח ה-API שלך
+
+    console.log(`geocodeAddress: Attempting to geocode address: '${address}'`);
+
+    try {
+        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
+        const data = await response.json();
+        console.log("geocodeAddress: Geocoding API response:", data);
+
+        if (data.status === 'OK' && data.results.length > 0) {
+            const location = data.results[0].geometry.location;
+            manualLat = location.lat;
+            manualLon = location.lng;
+            manualFullAddress = data.results[0].formatted_address; // שמור את הכתובת המלאה
+            console.log(`geocodeAddress: Geocoded successfully. Lat: ${manualLat}, Lng: ${manualLon}, Full Address: ${manualFullAddress}`);
+            return { lat: manualLat, lng: manualLon, fullAddress: manualFullAddress };
+        } else {
+            manualLat = null;
+            manualLon = null;
+            manualFullAddress = '';
+            console.warn(`geocodeAddress: Could not geocode address: ${address}. Status: ${data.status}`);
+            alert(`Could not find coordinates for the provided address: ${address}. Please check the address.`);
+            return null;
+        }
+    } catch (err) {
+        manualLat = null;
+        manualLon = null;
+        manualFullAddress = '';
+        console.error('geocodeAddress: Error during geocoding:', err);
+        alert(`An error occurred during address geocoding: ${err.message}`);
+        return null;
+    }
+}
+
     // Media upload handling and camera code
     function updateMediaUploadVisibility() {
         const selectedUploadOption = uploadSelect.value;
@@ -498,26 +537,45 @@ document.addEventListener('DOMContentLoaded', () => {
         handleLocationSelection();
     }
     if (cityInput) {
-        cityInput.addEventListener('input', () => { // *** זהו השינוי הקריטי עבור חווית המשתמש הדינמית ***
-            const selectedCity = cityInput.value.trim();
-            console.log(`cityInput 'input' event: Value changed to '${selectedCity}'`);
-            // אין צורך לאפס רחובות כאן, זה כבר מטופל בתוך loadStreetsForCity
-            loadStreetsForCity(selectedCity);
-            updateStatusIcon(cityInput, cityStatusIcon);
-        });
-    }
-    if (streetInput) {
-        streetInput.addEventListener('input', () => {
-            updateStatusIcon(streetInput, streetStatusIcon);
-        });
-    }
-    if (houseNumberInput) {
-        houseNumberInput.addEventListener('input', () => {
-            if (houseNumberStatusIcon) {
-                updateStatusIcon(houseNumberInput, houseNumberStatusIcon);
-            }
-        });
-    }
+    cityInput.addEventListener('input', () => {
+        const selectedCity = cityInput.value.trim();
+        console.log(`cityInput 'input' event: Value changed to '${selectedCity}'`);
+        loadStreetsForCity(selectedCity);
+        updateStatusIcon(cityInput, cityStatusIcon);
+    });
+    // הוסף event listener עבור blur כדי לבצע geocoding
+    cityInput.addEventListener('blur', () => {
+        if (cityInput.value.trim() && streetInput.value.trim()) {
+            geocodeAddress(cityInput.value.trim(), streetInput.value.trim(), houseNumberInput.value.trim());
+        }
+    });
+}
+
+if (streetInput) {
+    streetInput.addEventListener('input', () => {
+        updateStatusIcon(streetInput, streetStatusIcon);
+    });
+    // הוסף event listener עבור blur כדי לבצע geocoding
+    streetInput.addEventListener('blur', () => {
+        if (cityInput.value.trim() && streetInput.value.trim()) {
+            geocodeAddress(cityInput.value.trim(), streetInput.value.trim(), houseNumberInput.value.trim());
+        }
+    });
+}
+
+if (houseNumberInput) {
+    houseNumberInput.addEventListener('input', () => {
+        if (houseNumberStatusIcon) {
+            updateStatusIcon(houseNumberInput, houseNumberStatusIcon);
+        }
+    });
+    // הוסף event listener עבור blur כדי לבצע geocoding
+    houseNumberInput.addEventListener('blur', () => {
+        if (cityInput.value.trim() && streetInput.value.trim()) { // מספר בית הוא אופציונלי
+            geocodeAddress(cityInput.value.trim(), streetInput.value.trim(), houseNumberInput.value.trim());
+        }
+    });
+}
 
     if (uploadSelect) {
         uploadSelect.addEventListener('change', updateMediaUploadVisibility);
@@ -547,13 +605,25 @@ document.addEventListener('DOMContentLoaded', () => {
             let locationData = {};
 
             if (locationType === 'loc2') {
-                locationData = {
-                    type: 'manual',
-                    city: cityInput.value.trim(),
-                    street: streetInput.value.trim(),
-                    houseNumber: houseNumberInput.value.trim()
-                };
-            } else if (locationType === 'loc1') {
+    if (manualLat === null || manualLon === null) {
+        const geocoded = await geocodeAddress(cityInput.value.trim(), streetInput.value.trim(), houseNumberInput.value.trim());
+        if (!geocoded) {
+            alert('Cannot submit report. Could not determine coordinates for the manual address. Please check the address and try again.');
+            return; 
+        }
+    }
+
+    locationData = {
+        type: 'manual',
+        city: cityInput.value.trim(),
+        street: streetInput.value.trim(),
+        houseNumber: houseNumberInput.value.trim(),
+        latitude: manualLat, 
+        longitude: manualLon, 
+        address: manualFullAddress || `${houseNumberInput.value.trim()} ${streetInput.value.trim()}, ${cityInput.value.trim()}` // כתובת מלאה
+    };
+}
+         else if (locationType === 'loc1') {
                 if (currentLat === null || currentLon === null) {
                     alert('Cannot submit the report. Current location was not detected. Please try again or choose manual location.');
                     return;

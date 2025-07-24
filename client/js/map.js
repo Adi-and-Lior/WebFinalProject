@@ -55,3 +55,9 @@ function clearMarkers() {
     }
     markers = [];
 }
+const homeButton = document.querySelector('.thank-you-footer button'); // כפתור חזרה לעמוד הבית
+ if (homeButton) {
+        homeButton.addEventListener('click', () => {
+            window.location.href = '/html/homePageCitizen.html'; 
+        });
+    }
