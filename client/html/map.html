@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>דיווח בטוח</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        async function loadGoogleMapsScript() {
+            try {
+                const response = await fetch('/api/google-maps-api-key');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const apiKey = data.apiKey;
+
+                if (!apiKey) {
+                    throw new Error('מפתח API למפות לא הוחזר מהשרת.');
+                }
+
+                const script = document.createElement('script');
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`;
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+
+            } catch (error) {
+                console.error('שגיאה בטעינת מפתח ה-API של גוגל מפות או הסקריפט:', error);
+                alert('אירעה שגיאה בטעינת המפה. אנא נסה שוב מאוחר יותר.');
+            }
+        }
+
+        window.onload = loadGoogleMapsScript;
+
+    </script>
+    <script src="map.js"></script>
+</body>
+</html>
