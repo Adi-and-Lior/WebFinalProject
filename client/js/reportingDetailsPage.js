@@ -1,18 +1,28 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api';
-    const backButton = document.querySelector('.reports-title .back-arrow').closest('a'); // כפתור חזור
-    const homeButton = document.querySelector('.thank-you-footer button'); // כפתור חזרה לעמוד הבית
+    const backButton = document.querySelector('.reports-title .back-arrow').closest('a');
+    const homeButton = document.querySelector('.thank-you-footer button');
 
     const displayFaultType = document.getElementById('displayFaultType');
     const displayLocation = document.getElementById('displayLocation');
     const displayDate = document.getElementById('displayDate');
     const displayTime = document.getElementById('displayTime');
     const displayDescription = document.getElementById('displayDescription');
-    const mediaContainer = document.getElementById('displayMedia'); 
-    const displayStatus = document.getElementById('displayStatus'); 
-    const displayResponse = document.getElementById('displayMunicipalityResponse'); 
+    const mediaContainer = document.getElementById('displayMedia');
+    const displayStatus = document.getElementById('displayStatus');
+    const displayResponse = document.getElementById('displayMunicipalityResponse');
 
-    // פונקציה לקבלת פרמטר מה-URL
+    const getAddressFromCoordinates = async (lat, lon) => {
+  try {
+    const response = await fetch(`/api/reverse-geocode?lat=${lat}&lon=${lon}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('שגיאה בפענוח מיקום:', error);
+    return null;
+  }
+};
+
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
         const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -20,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
-    // פונקציה לאחזור דיווח ספציפי מהשרת
     async function fetchReportDetails(reportId) {
         try {
             const url = `${API_BASE_URL}/reports/${reportId}`;
@@ -37,7 +46,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const report = await res.json();
             console.log('פרטי דיווח נטענו בהצלחה:', report);
             return report;
-
         } catch (error) {
             console.error('שגיאה באחזור פרטי דיווח:', error);
             alert('אירעה שגיאה באחזור פרטי הדיווח. אנא נסה שוב מאוחר יותר.');
@@ -45,24 +53,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // פונקציה להצגת פרטי הדיווח בדף
-    function displayReportDetails(report) {
+    async function displayReportDetails(report) {
         if (!report) {
             console.warn('לא נמצאו פרטים עבור דיווח זה.');
-            // ניתן להציג הודעה למשתמש
             return;
         }
 
-        // עדכון פרטי הטקסט
         displayFaultType.textContent = report.faultType || 'לא זמין';
         displayDescription.textContent = report.faultDescription || 'אין תיאור';
 
         // מיקום
         if (report.location) {
-            if (report.location.city && report.location.street) {
-                displayLocation.textContent = `${report.location.street}, ${report.location.city}`;
+            if (report.location.type === 'manual') {
+                const city = report.location.city || '';
+                const street = report.location.street || '';
+                const houseNumber = report.location.houseNumber || '';
+                const address = `${city}, ${street}${houseNumber ? ' ' + houseNumber : ''}`;
+                displayLocation.textContent = address;
             } else if (report.location.type === 'current') {
-                displayLocation.textContent = `${report.location.street}, ${report.location.city}`;
+                const { latitude, longitude } = report.location;
+                const addressData = await getAddressFromCoordinates(latitude, longitude);
+                if (addressData) {
+                    const city = addressData.city || addressData.town || addressData.village || '';
+                    const street = addressData.road || '';
+                    const houseNumber = addressData.house_number || '';
+                    const formattedLocation = `${city}, ${street}${houseNumber ? ' ' + houseNumber : ''}`.trim();
+                    displayLocation.textContent = formattedLocation;
+                } else {
+                    displayLocation.textContent = 'מיקום לפי GPS';
+                }
             } else {
                 displayLocation.textContent = 'מיקום לא ידוע';
             }
@@ -77,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // סטטוס
         let statusText = '';
-        let statusClass = ''; // אופציונלי: קלאס לצבע סטטוס אם תרצה להוסיף CSS
+        let statusClass = '';
         switch (report.status) {
             case 'in-progress':
                 statusText = 'בטיפול';
@@ -93,16 +112,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 break;
             default:
                 statusText = report.status || 'לא ידוע';
-                statusClass = 'status-in-progress';  /////////////////////////?
+                statusClass = 'status-in-progress';
                 break;
         }
         displayStatus.textContent = statusText;
-        displayStatus.classList.add(statusClass); 
+        displayStatus.classList.add(statusClass);
 
         // תגובת הרשות המקומית
         displayResponse.textContent = report.municipalityResponse || 'טרם התקבלה תגובה';
 
-        // הצגת מדיה (תמונה/וידאו)
+        // מדיה
         if (report.media && report.mediaMimeType) {
             const mediaUrl = `${API_BASE_URL}/media/${report.media}`;
             const mimeType = report.mediaMimeType;
@@ -112,18 +131,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mediaElement = document.createElement('img');
                 mediaElement.src = mediaUrl;
                 mediaElement.alt = 'תמונת דיווח';
-                mediaElement.classList.add('detail-media'); 
+                mediaElement.classList.add('detail-media');
             } else if (mimeType.startsWith('video/')) {
                 mediaElement = document.createElement('video');
                 mediaElement.src = mediaUrl;
-                mediaElement.controls = true; 
-                mediaElement.classList.add('detail-media'); 
+                mediaElement.controls = true;
+                mediaElement.classList.add('detail-media');
             }
 
             if (mediaElement) {
-                mediaContainer.innerHTML = ''; 
+                mediaContainer.innerHTML = '';
                 mediaContainer.appendChild(mediaElement);
-            }else { // <--- הוסף else למקרה ש-mediaMimeType לא נתמך
+            } else {
                 mediaContainer.textContent = 'פורמט מדיה לא נתמך';
             }
         } else {
@@ -131,11 +150,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // קבלת ה-reportId מה-URL
     const reportId = getUrlParameter('id');
     if (reportId) {
         const reportDetails = await fetchReportDetails(reportId);
-        displayReportDetails(reportDetails);
+        await displayReportDetails(reportDetails);
     } else {
         console.error('Report ID לא נמצא ב-URL.');
         alert('שגיאה: מזהה דיווח חסר. אנא חזור לדף הדיווחים.');
@@ -150,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (homeButton) {
         homeButton.addEventListener('click', () => {
-            window.location.href = '/html/homePageCitizen.html'; 
+            window.location.href = '/html/homePageCitizen.html';
         });
     }
 

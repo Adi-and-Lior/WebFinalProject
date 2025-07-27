@@ -639,6 +639,7 @@ if (houseNumberInput) {
                         mediaId: data.mediaGridFSId || 'no media',
                         mediaMimeType: data.mediaMimeType || null
                     }));
+                    localStorage.setItem('lastReportId', data.reportId || data._id);
                     alert('הדיווח נשלח בהצלחה!');
                     window.location.href = '/html/reportReceivedPage.html';
                 } else {

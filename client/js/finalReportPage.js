@@ -47,11 +47,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         displayFaultType.textContent = report.faultType || 'לא ידוע';
         let locationText = '';
         if (report.location) {
-            if (report.location.city)        locationText += report.location.city;
-            if (report.location.street)      locationText += `, ${report.location.street}`;
-            if (report.location.houseNumber) locationText += ` ${report.location.houseNumber}`;
+            if (report.location.type === 'manual') {
+        if (report.location.city)        locationText += report.location.city;
+        if (report.location.street)      locationText += `, ${report.location.street}`;
+        if (report.location.houseNumber) locationText += ` ${report.location.houseNumber}`;
+        document.getElementById('displayLocation').textContent = locationText || 'לא הוזן מיקום';
+    } else if (report.location.type === 'current') {
+        const lat = report.location.latitude;
+        const lon = report.location.longitude;
+        if (lat != null && lon != null) {
+            try {
+                const geoRes = await fetch(`${BASE_URL}/api/reverse-geocode?lat=${lat}&lon=${lon}`);
+                if (geoRes.ok) {
+                    const geoData = await geoRes.json();
+                    const city = geoData.city || geoData.town || geoData.village || '';
+                    const street = geoData.road || '';
+                    const houseNumber = geoData.house_number || '';
+                    locationText = `${city}, ${street}${houseNumber ? ' ' + houseNumber : ''}`;
+                    document.getElementById('displayLocation').textContent = locationText || 'מיקום לפי GPS';
+                } else {
+                    document.getElementById('displayLocation').textContent = 'מיקום לפי GPS';
+                }
+            } catch (err) {
+                console.error('שגיאה ב-reverse geocode:', err);
+                document.getElementById('displayLocation').textContent = 'מיקום לפי GPS';
+            }
+        } else {
+            document.getElementById('displayLocation').textContent = 'מיקום לפי GPS';
         }
-        displayLocation.textContent = locationText || 'לא הוזן מיקום';
+    } else {
+        document.getElementById('displayLocation').textContent = 'סוג מיקום לא נתמך';
+    }
+} else {
+    document.getElementById('displayLocation').textContent = 'לא הוזן מיקום';
+}
         if (report.timestamp) {
             const date = new Date(report.timestamp);
             displayDate.textContent = date.toLocaleDateString('he-IL');
@@ -95,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const statusHebrew     = statusTranslations[normalizedStatus] || 'לא ידוע';
         if (displayStatus) {
             displayStatus.textContent = statusHebrew;
-            displayStatus.classList.remove('status-completed', 'status-rejected', 'status-in-progress');
+            displayStatus.classList.remove('status-paid', 'status-rejected', 'status-in-progress');
             if (normalizedStatus === 'completed')  displayStatus.classList.add('status-paid');
             if (normalizedStatus === 'rejected')   displayStatus.classList.add('status-rejected');
             if (normalizedStatus === 'in-progress') displayStatus.classList.add('status-in-progress');

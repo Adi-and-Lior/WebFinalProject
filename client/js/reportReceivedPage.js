@@ -1,5 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Get HTML elements where report details will be displayed
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('[INFO] DOM fully loaded');
+
     const displayFaultType = document.getElementById('displayFaultType');
     const displayLocation = document.getElementById('displayLocation');
     const displayDate = document.getElementById('displayDate');
@@ -8,81 +9,172 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayMedia = document.getElementById('displayMedia');
     const mediaPreview = document.getElementById('mediaPreview');
 
-    // Get buttons
     const goToMyReportsBtn = document.getElementById('goToMyReportsBtn');
     const goToHomeBtn = document.getElementById('goToHomeBtn');
 
-    const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api'; 
-    // Load report details from localStorage
-    const lastReportDetails = JSON.parse(localStorage.getItem('lastReportDetails'));
+    const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api';
 
-    if (lastReportDetails) {
-        console.log('Last report details found:', lastReportDetails);
+    async function fetchReportById(reportId) {
+        console.log(`[DEBUG] Fetching report by ID: ${reportId}`);
+        try {
+            const response = await fetch(`${API_BASE_URL}/reports/${reportId}`);
+            if (!response.ok) throw new Error('Failed to fetch report');
+            const data = await response.json();
+            console.log('[DEBUG] Report fetched from server:', data);
+            return data;
+        } catch (error) {
+            console.error('שגיאה באחזור דיווח לפי ID:', error);
+            return null;
+        }
+    }
 
-        // Display fault type
-        displayFaultType.textContent = lastReportDetails.faultType || 'לא ידוע';
+    async function getAddressFromCoordinates(lat, lon) {
+        console.log(`[DEBUG] Getting address from coordinates: lat=${lat}, lon=${lon}`);
+        try {
+            const response = await fetch(`${API_BASE_URL}/reverse-geocode?lat=${lat}&lon=${lon}`);
+            console.log('[DEBUG] Reverse geocode request status:', response.status);
+            if (!response.ok) throw new Error('Failed to reverse geocode');
+            const data = await response.json();
+            console.log('[DEBUG] Address data returned:', data);
+            return data;
+        } catch (error) {
+            console.error('שגיאה בפענוח מיקום:', error);
+            return null;
+        }
+    }
 
-        // Display location
-        displayLocation.textContent = lastReportDetails.location || 'לא ידוע';
+    function parseLocationString(locationStr) {
+        console.log('[DEBUG] Parsing location string:', locationStr);
+        let formattedLocation = '';
 
-        // Parse date and time
-        if (lastReportDetails.timestamp) {
-            const date = new Date(lastReportDetails.timestamp);
+        if (locationStr.includes('עיר:') && locationStr.includes('רחוב:')) {
+            const cityMatch = locationStr.match(/עיר:\s*([^,]+)/);
+            const streetMatch = locationStr.match(/רחוב:\s*([^,]+)/);
+            const numberMatch = locationStr.match(/מספר בית:\s*(\d+)/);
 
-            // Populate date and time within "Report Details"
-            displayDate.textContent = date.toLocaleDateString('he-IL'); // Israeli date format
-            displayTime.textContent = date.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }); // Israeli time format
+            const city = cityMatch ? cityMatch[1].trim() : '';
+            const street = streetMatch ? streetMatch[1].trim() : '';
+            const number = numberMatch ? numberMatch[1].trim() : '';
 
+            formattedLocation = `${city}, ${street}${number ? ' ' + number : ''}`;
+        } else {
+            const parts = locationStr.split(',');
+            if (parts.length >= 2) {
+                const streetAndNumber = parts[0].trim();
+                const city = parts[1].trim();
+                formattedLocation = `${city} ${streetAndNumber}`;
+            } else {
+                formattedLocation = locationStr;
+            }
+        }
+        console.log('[DEBUG] Parsed formatted location:', formattedLocation);
+        return formattedLocation;
+    }
+
+    const lastReportId = localStorage.getItem('lastReportId');
+    console.log('[DEBUG] Last report ID from localStorage:', lastReportId);
+    let reportData = null;
+
+    if (lastReportId) {
+        reportData = await fetchReportById(lastReportId);
+    }
+
+    if (!reportData) {
+        console.warn('[WARN] Report not found in server, trying localStorage fallback');
+        reportData = JSON.parse(localStorage.getItem('lastReportDetails'));
+        console.log('[DEBUG] Report from localStorage:', reportData);
+    }
+
+    if (reportData) {
+        console.log('[INFO] Processing report data');
+        displayFaultType.textContent = reportData.faultType || 'לא ידוע';
+
+        if (reportData.location) {
+            console.log('[DEBUG] Report location object:', reportData.location);
+
+            if (reportData.location.type === 'manual') {
+                const city = reportData.location.city || '';
+                const street = reportData.location.street || '';
+                const houseNumber = reportData.location.houseNumber || '';
+                const address = `${city}, ${street}${houseNumber ? ' ' + houseNumber : ''}`;
+                displayLocation.textContent = address;
+            } else if (reportData.location.type === 'current') {
+                const { latitude, longitude } = reportData.location;
+                console.log('[DEBUG] Current location - lat:', latitude, 'lon:', longitude);
+
+                if (latitude != null && longitude != null) {
+                    const addressData = await getAddressFromCoordinates(latitude, longitude);
+                    if (addressData) {
+                        const city = addressData.city || addressData.town || addressData.village || '';
+                        const street = addressData.road || '';
+                        const houseNumber = addressData.house_number || '';
+                        const formattedLocation = `${city}, ${street}${houseNumber ? ' ' + houseNumber : ''}`.trim();
+                        console.log('[DEBUG] Formatted location from GPS:', formattedLocation);
+                        displayLocation.textContent = formattedLocation || 'מיקום לפי GPS';
+                    } else {
+                        console.warn('[WARN] Address data not found, showing fallback');
+                        displayLocation.textContent = 'מיקום לפי GPS';
+                    }
+                } else {
+                    console.warn('[WARN] Missing latitude/longitude');
+                    displayLocation.textContent = 'מיקום לפי GPS';
+                }
+            } else {
+                console.warn('[WARN] Unknown location type');
+                displayLocation.textContent = 'מיקום לא ידוע';
+            }
+        } else {
+            console.warn('[WARN] No location data at all');
+            displayLocation.textContent = 'מיקום לא ידוע';
+        }
+
+        if (reportData.timestamp) {
+            const date = new Date(reportData.timestamp);
+            displayDate.textContent = date.toLocaleDateString('he-IL');
+            displayTime.textContent = date.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
         } else {
             displayDate.textContent = 'לא ידוע';
             displayTime.textContent = 'לא ידוע';
         }
 
-        // Display fault description (if exists)
-        displayDescription.textContent = lastReportDetails.faultDescription || 'אין תיאור';
+        displayDescription.textContent = reportData.faultDescription || 'אין תיאור';
 
-        // Display media file
-        if (lastReportDetails.mediaId && lastReportDetails.mediaId !== 'no media') {
-    // ה-URL הנכון הוא דרך ה-API שמגיש מדיה לפי ID
-    const mediaUrl = `${API_BASE_URL}/media/${lastReportDetails.mediaId}`;
-    const mimeType = lastReportDetails.mediaMimeType; // קבל את ה-MIME type ששמרנו
+        if (reportData.media && reportData.media !== 'no media') {
+            const mediaUrl = `${API_BASE_URL}/media/${reportData.media}`;
+            const mimeType = reportData.mediaMimeType;
 
-    // וודא שננקה כל מדיה קודמת לפני הוספת החדשה
-    // הסתר את אלמנט ה-img preview המקורי
-// ננקה את התמונה הקודמת (הסר src), אבל לא נסתר אותה
-    mediaPreview.src = '';
-    // אם יש כבר אלמנט וידאו קודם, הסר אותו (חשוב במקרה של ניווט לדף הזה שוב)
-    let existingVideoElement = document.getElementById('reportMediaVideoPreview');
-    if (existingVideoElement) {
-        existingVideoElement.remove();
-    }
+            console.log('[DEBUG] Media ID:', reportData.mediaId);
+            console.log('[DEBUG] Media URL:', mediaUrl);
+            console.log('[DEBUG] Media MIME type:', mimeType);
 
-    if (mimeType && mimeType.startsWith('image/')) {
-        mediaPreview.src = mediaUrl;
-        mediaPreview.style.display = 'block'; // הצג את אלמנט ה-img
-        displayMedia.textContent = 'קובץ תמונה מצורף'; // טקסט תיאורי
-    } else if (mimeType && mimeType.startsWith('video/')) {
-        const videoElement = document.createElement('video');
-        videoElement.id = 'reportMediaVideoPreview'; // תן לו ID לזיהוי עתידי
-        videoElement.controls = true;
-        videoElement.src = mediaUrl;
-        videoElement.classList.add('uploaded-media-preview');
-        // הוסף את אלמנט הוידאו ל-displayMedia (או לכל אלמנט אחר שתבחר)
-        displayMedia.appendChild(videoElement);
-        displayMedia.textContent = 'קובץ וידאו מצורף'; // טקסט תיאורי
+            mediaPreview.src = '';
+            let existingVideo = document.getElementById('reportMediaVideoPreview');
+            if (existingVideo) existingVideo.remove();
+
+            if (mimeType && mimeType.startsWith('image/')) {
+                mediaPreview.src = mediaUrl;
+                mediaPreview.style.display = 'block';
+                displayMedia.textContent = 'קובץ תמונה מצורף';
+            } else if (mimeType && mimeType.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.id = 'reportMediaVideoPreview';
+                video.controls = true;
+                video.src = mediaUrl;
+                video.classList.add('uploaded-media-preview');
+                displayMedia.appendChild(video);
+                displayMedia.textContent = 'קובץ וידאו מצורף';
+            } else {
+                console.warn('[WARN] Unsupported or unknown media type');
+                displayMedia.textContent = 'קובץ מדיה לא נתמך או לא זוהה';
+                mediaPreview.style.display = 'none';
+            }
+        } else {
+            console.log('[INFO] No media attached to report');
+            displayMedia.textContent = 'אין קובץ מצורף';
+            mediaPreview.style.display = 'none';
+        }
     } else {
-        // Fallback אם אין MIME type או שהוא לא נתמך (או ש-mediaId קיים אבל mimeType לא)
-        displayMedia.textContent = 'קובץ מדיה לא נתמך או לא זוהה';
-        mediaPreview.style.display = 'none';
-    }
-} else {
-    displayMedia.textContent = 'אין קובץ מצורף';
-    mediaPreview.style.display = 'none';
-}
-
-    } else {
-        // If no data in localStorage (e.g., user navigated directly to the page)
-        console.warn('No recent report details found in localStorage.');
+        console.error('[ERROR] No report data found');
         displayFaultType.textContent = 'אין נתונים';
         displayLocation.textContent = 'אין נתונים';
         displayDate.textContent = 'אין נתונים';
@@ -91,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displayMedia.textContent = 'אין נתונים';
         mediaPreview.style.display = 'none';
     }
-    
+
     if (goToMyReportsBtn) {
         goToMyReportsBtn.addEventListener('click', () => {
             window.location.href = '/html/myReportsPage.html';

@@ -28,14 +28,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('Report details fetched:', report);
         document.getElementById('displayFaultType').textContent = report.faultType || 'לא ידוע';
         if (report.location) {
-            let locationText = '';
-            if (report.location.city)        locationText += report.location.city;
-            if (report.location.street)      locationText += `, ${report.location.street}`;
-            if (report.location.houseNumber) locationText += ` ${report.location.houseNumber}`;
-            document.getElementById('displayLocation').textContent = locationText || 'לא הוזן מיקום';
+    let locationText = '';
+
+    if (report.location.type === 'manual') {
+        if (report.location.city)        locationText += report.location.city;
+        if (report.location.street)      locationText += `, ${report.location.street}`;
+        if (report.location.houseNumber) locationText += ` ${report.location.houseNumber}`;
+        document.getElementById('displayLocation').textContent = locationText || 'לא הוזן מיקום';
+    } else if (report.location.type === 'current') {
+        const lat = report.location.latitude;
+        const lon = report.location.longitude;
+        if (lat != null && lon != null) {
+            try {
+                const geoRes = await fetch(`${backendBaseUrl}/api/reverse-geocode?lat=${lat}&lon=${lon}`);
+                if (geoRes.ok) {
+                    const geoData = await geoRes.json();
+                    const city = geoData.city || geoData.town || geoData.village || '';
+                    const street = geoData.road || '';
+                    const houseNumber = geoData.house_number || '';
+                    locationText = `${city}, ${street}${houseNumber ? ' ' + houseNumber : ''}`;
+                    document.getElementById('displayLocation').textContent = locationText || 'מיקום לפי GPS';
+                } else {
+                    document.getElementById('displayLocation').textContent = 'מיקום לפי GPS';
+                }
+            } catch (err) {
+                console.error('שגיאה ב-reverse geocode:', err);
+                document.getElementById('displayLocation').textContent = 'מיקום לפי GPS';
+            }
         } else {
-            document.getElementById('displayLocation').textContent = 'לא הוזן מיקום';
+            document.getElementById('displayLocation').textContent = 'מיקום לפי GPS';
         }
+    } else {
+        document.getElementById('displayLocation').textContent = 'סוג מיקום לא נתמך';
+    }
+} else {
+    document.getElementById('displayLocation').textContent = 'לא הוזן מיקום';
+}
         if (report.timestamp) {
             const dateObj = new Date(report.timestamp);
             document.getElementById('displayDate').textContent =
