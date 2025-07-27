@@ -973,6 +973,7 @@ textarea:focus{
   box-sizing: border-box; 
   resize: vertical; 
 }
+/*for mapPage page*/
 #map {
     height: calc(90vh - 300px);
     width: 100%;                            
@@ -983,17 +984,16 @@ textarea:focus{
   margin-bottom: 15px;
   height: 60px;  
 }
-
 .select2-container {
     width: 100% !important;
 }
 .select2-selection {
     width: 100% !important; 
-    line-height: 40px;    /* יישר את הטקסט באמצע אנכית */
+    line-height: 40px; 
     font-size: 16px; 
 }
 .select2-container--open .select2-dropdown {
-    top: 100% !important; /* ישר מתחת לרכיב */
+    top: 100% !important; 
     margin-top: 0px !important;
 }
 .select2-dropdown {
@@ -1001,25 +1001,24 @@ textarea:focus{
     font-size: 16px;
 }
 .select2-container .select2-selection--single {
-    height: 72px !important; /* הגובה של הלחצן */
+    height: 72px !important;
     margin-bottom: 300px !important;
     background-color: #f8f8f8 !important;
     border: 1px solid #ddd !important;
     border-radius: 10px !important;
   }
-/* יישור טקסט שנבחר בתוך התיבה */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-  margin-top: 25px;       /* ← שיהיה באמצע בגובה */
+  margin-top: 25px;    
   font-size: 35px;
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow {
-  margin-top: 25px;        /* ← תואם לגובה שלמעלה */
+  margin-top: 25px;     
   margin-left:5px;
 }
 .select2-results__option {
-    font-size: 18px;      /* גודל גופן גדול יותר */
-    line-height: 1.5;     /* גובה שורה נוח לקריאה */
-    min-height: 40px;     /* מינימום גובה לאופציה */
+    font-size: 18px; 
+    line-height: 1.5;    
+    min-height: 40px; 
     font-size: 30px;
 }
 .select2-search--dropdown .select2-search__field {

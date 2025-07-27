@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. Defining HTML elements ---
+    // --- Defining HTML elements ---
     const backButton = document.getElementById('backButton');
     const reportForm = document.querySelector('.report-form');
     const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api';
-
     // Fault type elements
     const faultTypeSelect = document.getElementById('fault-type');
     const faultDescriptionTextarea = document.getElementById('fault-description');
@@ -44,9 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLon = null;
     let locationString = '';
     let currentCity = ''; 
-    let manualLat = null; // חדש
-    let manualLon = null; // חדש
-    let manualFullAddress = ''; // חדש: לשמור את הכתובת המלאה המפוענחת
+    let manualLat = null; 
+    let manualLon = null; 
+    let manualFullAddress = ''; 
 
     // User info from localStorage
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -68,14 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // נקה את הרשימה והוסף אפשרות ברירת מחדל
         citySelect.innerHTML = "";
         const defaultOption = document.createElement("option");
         defaultOption.value = "";
         defaultOption.textContent = "בחר עיר";
         citySelect.appendChild(defaultOption);
 
-        // הוסף את הערים
         data.forEach(city => {
             const option = document.createElement("option");
             option.value = city;
@@ -83,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
             citySelect.appendChild(option);
         });
 
-        // הפעל select2 אם קיים
         if (window.$ && $(citySelect).select2) {
             $(citySelect).select2({
                 placeholder: "בחר עיר",
@@ -96,34 +92,28 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("loadCities: שגיאה בשליפת ערים:", err);
     }
 }
-    // קריאה לטעינת רחובות עבור עיר מסוימת מהשרת שלך
+
     async function loadStreetsForCity(cityName) {
     console.log(`loadStreetsForCity: --- STARTING STREET LOAD for city: '${cityName}' ---`);
 
-    // הפניה לאלמנט
     const streetSelect = document.getElementById("streetSelect");
     const streetStatusIcon = document.getElementById("streetStatusIcon");
 
-    // שלב 1: איפוס
     streetsData = [];
     
-    // הריסת Select2 אם קיים
     if ($(streetSelect).hasClass("select2-hidden-accessible")) {
         $(streetSelect).select2('destroy');
     }
 
-    // ניקוי תוכן select
     streetSelect.innerHTML = "";
     const defaultOption = document.createElement("option");
     defaultOption.value = "";
     defaultOption.textContent = "בחר רחוב";
     streetSelect.appendChild(defaultOption);
 
-    // אם אין עיר נבחרת – סיים
     if (!cityName) {
         console.log("אין עיר נבחרת, הפונקציה תצא.");
         updateStatusIcon(streetSelect, streetStatusIcon, false);
-        // מאתחלים select2 מחדש שיהיה ריק אבל תקין
         $(streetSelect).select2({
             placeholder: "בחר רחוב",
             dir: "rtl",
@@ -137,25 +127,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
         const data = await res.json();
-        streetsData = [...new Set(data)]; // מסיר כפילויות
+        streetsData = [...new Set(data)]; 
 
-        // הוספת האופציות ל-<select>
         streetsData.forEach(street => {
-    const name = typeof street === 'string' ? street : street.name; // גיבוי לשני מצבים
+    const name = typeof street === 'string' ? street : street.name; 
     const option = document.createElement("option");
     option.value = name;
     option.textContent = name;
     streetSelect.appendChild(option);
 });
 
-        // אתחול select2 מחדש
         $(streetSelect).select2({
             placeholder: "בחר רחוב",
             dir: "rtl",
             width: "100%"
         });
-
-        // עדכון האייקון
         updateStatusIcon(streetSelect, streetStatusIcon, true);
 
     } catch (err) {
@@ -176,19 +162,14 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '../index.html';
     }
 
-    // Back button handler
     if (backButton) {
         backButton.addEventListener('click', (event) => {
             event.preventDefault();
             window.location.href = '/html/homePageCitizen.html';
         });
     }
-
-    // --- Path constants for icons ---
     const V_ICON_PATH = '../images/V_icon.svg'; 
     const ASTERISK_ICON_PATH = '../images/asterisk.svg';
-
-    // --- Function to update icon based on input/selection ---
     function updateStatusIcon(inputElement, iconElement) {
         if (!iconElement) return;
 
@@ -213,8 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
-    // Update fault description requirement and icon
     function updateFaultDescriptionRequirement() {
         const selectedFaultType = faultTypeSelect.value;
         if (selectedFaultType === 'type4') {
@@ -232,22 +211,16 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStatusIcon(faultTypeSelect, faultTypeStatusIcon);
         updateStatusIcon(faultDescriptionTextarea, faultDescriptionStatusIcon);
     }
-
-    // Handle location selection and related icons
     function handleLocationSelection() {
         const selectedLocationType = locationSelect.value;
         console.log(`handleLocationSelection: Selected location type: ${selectedLocationType}`);
 
-        if (selectedLocationType === 'loc2') { // Manual location entry
+        if (selectedLocationType === 'loc2') { 
             manualAddressSection.style.display = 'block';
             citySelect.setAttribute('required', 'true');
             streetSelect.setAttribute('required', 'true');
-            houseNumberInput.removeAttribute('required'); // ודא שאינו חובה אם לא מוגדר כך ב-HTML
-            
-            // טען רחובות אם יש כבר עיר בקלט (למקרה שהמשתמש עבר בין אפשרויות)
-            // קריאה זו תפעיל את האיפוס בתוך loadStreetsForCity
+            houseNumberInput.removeAttribute('required'); 
             loadStreetsForCity(citySelect.value.trim());
-
             updateStatusIcon(citySelect, cityStatusIcon);
             updateStatusIcon(streetSelect, streetStatusIcon);
             if (houseNumberInput.hasAttribute('required') && houseNumberStatusIcon) {
@@ -255,13 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (houseNumberStatusIcon) {
                 houseNumberStatusIcon.src = ASTERISK_ICON_PATH;
             }
-
-
             currentLat = null;
             currentLon = null;
             locationString = '';
             currentCity = '';
-        } else if (selectedLocationType === 'loc1') { // Current location
+        } else if (selectedLocationType === 'loc1') { 
             manualAddressSection.style.display = 'none';
             citySelect.removeAttribute('required');
             citySelect.value = '';
@@ -269,17 +240,12 @@ document.addEventListener('DOMContentLoaded', () => {
             streetSelect.value = '';
             houseNumberInput.removeAttribute('required'); 
             houseNumberInput.value = '';
-
-            // איפוס רשימת הרחובות והקלט שלהם כאשר עוברים למיקום נוכחי
             streetsData = [];
-
             if (cityStatusIcon) cityStatusIcon.src = ASTERISK_ICON_PATH;
             if (streetStatusIcon) streetStatusIcon.src = ASTERISK_ICON_PATH;
             if (houseNumberStatusIcon) houseNumberStatusIcon.src = ASTERISK_ICON_PATH;
-
-
             getCurrentLocation();
-        } else { // No location selected
+        } else { 
             manualAddressSection.style.display = 'none';
             citySelect.removeAttribute('required');
             citySelect.value = '';
@@ -287,13 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
             streetSelect.value = '';
             houseNumberInput.removeAttribute('required'); 
             houseNumberInput.value = '';
-
-            // איפוס רשימת הרחובות והקלט שלהם כאשר לא נבחרה אפשרות
             streetsData = [];
             if (cityStatusIcon) cityStatusIcon.src = ASTERISK_ICON_PATH;
             if (streetStatusIcon) streetStatusIcon.src = ASTERISK_ICON_PATH;
             if (houseNumberStatusIcon) houseNumberStatusIcon.src = ASTERISK_ICON_PATH;
-
             currentLat = null;
             currentLon = null;
             locationString = '';
@@ -301,8 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateStatusIcon(locationSelect, locationStatusIcon);
     }
-
-    // Get current location and convert to address using Google Geocoding API
     async function getCurrentLocation() {
         if (!navigator.geolocation) {
             alert("Your browser does not support Geolocation. Please use the 'Manual location entry' option.");
@@ -310,29 +271,24 @@ document.addEventListener('DOMContentLoaded', () => {
             handleLocationSelection();
             return;
         }
-
         console.log("getCurrentLocation: Attempting to get current position...");
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 currentLat = position.coords.latitude;
                 currentLon = position.coords.longitude;
                 console.log(`getCurrentLocation: Current Location: Lat ${currentLat}, Lon ${currentLon}`);
-
                 try {
                     const apiKey = 'AIzaSyBnRHLdYCyHCyCZA30LeDv468lFXEvgbvA';
                     const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLat},${currentLon}&key=${apiKey}`);
                     const data = await response.json();
                     console.log("getCurrentLocation: Geocoding API response:", data);
-
                     if (data.status === 'OK' && data.results.length > 0) {
                         locationString = data.results[0].formatted_address;
-                        
                         const addressComponents = data.results[0].address_components;
                         const cityComponent = addressComponents.find(component =>
                             component.types.includes('locality') || component.types.includes('administrative_area_level_1')
                         );
                         currentCity = cityComponent ? cityComponent.long_name : '';
-
                         console.log("getCurrentLocation: Resolved address:", locationString, "City:", currentCity);
                         alert(`Location detected: ${locationString}`);
                     } else {
@@ -379,18 +335,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         );
     }
-
     async function geocodeAddress(city, street, houseNumber) {
     const address = `${houseNumber ? houseNumber + ' ' : ''}${street}, ${city}, Israel`; // בנה את הכתובת
     const apiKey = 'AIzaSyBnRHLdYCyHCyCZA30LeDv468lFXEvgbvA'; // השתמש במפתח ה-API שלך
-
     console.log(`geocodeAddress: Attempting to geocode address: '${address}'`);
-
     try {
         const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
         const data = await response.json();
         console.log("geocodeAddress: Geocoding API response:", data);
-
         if (data.status === 'OK' && data.results.length > 0) {
             const location = data.results[0].geometry.location;
             manualLat = location.lat;
@@ -415,12 +367,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 }
-
-    // Media upload handling and camera code
     function updateMediaUploadVisibility() {
         const selectedUploadOption = uploadSelect.value;
         console.log('updateMediaUploadVisibility: Upload option selected:', selectedUploadOption);
-
         mediaUploadSection.style.display = 'none';
         mediaFileInput.removeAttribute('required');
         mediaFileInput.removeAttribute('accept');
@@ -429,22 +378,18 @@ document.addEventListener('DOMContentLoaded', () => {
         video.style.display = 'none';
         captureButton.style.display = 'none';
         stopCamera();
-
         const existingPreview = document.getElementById('capturedImagePreview');
         if (existingPreview) {
             existingPreview.remove();
         }
         capturedBlob = null;
         updateStatusIcon(mediaFileInput, mediaFileStatusIcon);
-
         if (selectedUploadOption === 'option1') {
             mediaUploadSection.style.display = 'none';
             mediaFileInput.removeAttribute('required');
-
             video.style.display = 'block';
             captureButton.style.display = 'inline-block';
             startCamera();
-
         } else if (selectedUploadOption === 'option2') {
             mediaUploadSection.style.display = 'block';
             mediaFileInput.setAttribute('required', 'true');
@@ -452,12 +397,10 @@ document.addEventListener('DOMContentLoaded', () => {
             mediaFileInput.removeAttribute('capture');
             mediaFileInput.value = '';
             updateStatusIcon(mediaFileInput, mediaFileStatusIcon);
-
         }
         console.log('updateMediaUploadVisibility: Media file field required:', mediaFileInput.hasAttribute('required'));
         updateStatusIcon(uploadSelect, uploadStatusIcon);
     }
-
     async function startCamera() {
         try {
             stopCamera();
@@ -472,7 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateMediaUploadVisibility();
         }
     }
-
     function stopCamera() {
         if (stream) {
             stream.getTracks().forEach(track => {
@@ -485,7 +427,6 @@ document.addEventListener('DOMContentLoaded', () => {
         video.pause();
         console.log("stopCamera: Camera stopped.");
     }
-
     if (captureButton) {
         captureButton.addEventListener('click', () => {
             if (!stream) {
@@ -538,43 +479,37 @@ document.addEventListener('DOMContentLoaded', () => {
      $(citySelect).on('select2:select', (e) => {
         const selectedCity = e.params.data.text.trim();
         console.log(`select2: City selected: '${selectedCity}'`);
-        loadStreetsForCity(selectedCity);  // רק כאן תטען הרחובות
+        loadStreetsForCity(selectedCity);  
         updateStatusIcon(citySelect, cityStatusIcon);
     });
-    // הוסף event listener עבור blur כדי לבצע geocoding
     citySelect.addEventListener('blur', () => {
         if (citySelect.value.trim() && streetSelect.value.trim()) {
             geocodeAddress(citySelect.value.trim(), streetSelect.value.trim(), houseNumberInput.value.trim());
         }
     });
 }
-
 if (streetSelect) {
      $(streetSelect).on('select2:select', () => {
         updateStatusIcon(streetSelect, streetStatusIcon);
     });
-    // הוסף event listener עבור blur כדי לבצע geocoding
     streetSelect.addEventListener('blur', () => {
         if (citySelect.value.trim() && streetSelect.value.trim()) {
             geocodeAddress(citySelect.value.trim(), streetSelect.value.trim(), houseNumberInput.value.trim());
         }
     });
 }
-
 if (houseNumberInput) {
     houseNumberInput.addEventListener('input', () => {
         if (houseNumberStatusIcon) {
             updateStatusIcon(houseNumberInput, houseNumberStatusIcon);
         }
     });
-    // הוסף event listener עבור blur כדי לבצע geocoding
     houseNumberInput.addEventListener('blur', () => {
-        if (citySelect.value.trim() && streetSelect.value.trim()) { // מספר בית הוא אופציונלי
+        if (citySelect.value.trim() && streetSelect.value.trim()) {
             geocodeAddress(citySelect.value.trim(), streetSelect.value.trim(), houseNumberInput.value.trim());
         }
     });
 }
-
     if (uploadSelect) {
         uploadSelect.addEventListener('change', updateMediaUploadVisibility);
         updateMediaUploadVisibility();
@@ -585,23 +520,18 @@ if (houseNumberInput) {
         });
         updateStatusIcon(mediaFileInput, mediaFileStatusIcon);
     }
-
     if (reportForm) {
         reportForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-
             if (!reportForm.checkValidity()) {
                 alert('Please fill in all required fields.');
                 reportForm.reportValidity();
                 return;
             }
-
             const faultType = faultTypeSelect.options[faultTypeSelect.selectedIndex].text;
             const faultDescription = faultDescriptionTextarea.value.trim();
             const locationType = locationSelect.value;
-
             let locationData = {};
-
             if (locationType === 'loc2') {
     if (manualLat === null || manualLon === null) {
         const geocoded = await geocodeAddress(citySelect.value.trim(), streetSelect.value.trim(), houseNumberInput.value.trim());
@@ -610,7 +540,6 @@ if (houseNumberInput) {
             return; 
         }
     }
-
     locationData = {
         type: 'manual',
         city: citySelect.value.trim(),
@@ -637,10 +566,8 @@ if (houseNumberInput) {
                 alert('Please select a location type.');
                 return;
             }
-
             const uploadOption = uploadSelect.value;
             let mediaToUpload = null;
-
             if (uploadOption === 'option1') {
                 if (capturedBlob) {
                     mediaToUpload = new File([capturedBlob], 'captured_image.jpeg', { type: 'image/jpeg' });
@@ -659,7 +586,6 @@ if (houseNumberInput) {
                 alert('אנא בחר אפשרות להעלאת מדיה (מצלמה או ספריית תמונות).');
                 return;
             }
-
             const formData = new FormData();
             formData.append('faultType', faultType);
             formData.append('faultDescription', faultDescription);
@@ -671,7 +597,6 @@ if (houseNumberInput) {
             }
             formData.append('createdBy', currentUsername);
             formData.append('creatorId', currentUserId);
-
             console.log('Report data ready for client submission:', {
                 faultType,
                 faultDescription,
@@ -682,7 +607,6 @@ if (houseNumberInput) {
                 createdBy: currentUsername,
                 creatorId: currentUserId
             });
-
             try {
                 console.log('[Client] mediaToUpload:', mediaToUpload);
                 console.log('[Client] mediaToUpload name:', mediaToUpload?.name);
@@ -695,12 +619,9 @@ if (houseNumberInput) {
                     method: 'POST',
                     body: formData
                 });
-
                 const data = await res.json();
-
                 if (res.ok) {
                     console.log('Report submitted successfully:', data.message);
-
                     let displayLocation = '';
                     if (locationType === 'loc1') {
                         displayLocation = locationString || `Your current location (lat: ${currentLat}, lon: ${currentLon})`;
@@ -710,7 +631,6 @@ if (houseNumberInput) {
                             displayLocation += ` מספר בית: ${houseNumberInput.value}`;
                         }
                     }
-
                     localStorage.setItem('lastReportDetails', JSON.stringify({
                         faultType: faultTypeSelect.options[faultTypeSelect.selectedIndex].text,
                         faultDescription: faultDescription,
@@ -719,7 +639,6 @@ if (houseNumberInput) {
                         mediaId: data.mediaGridFSId || 'no media',
                         mediaMimeType: data.mediaMimeType || null
                     }));
-
                     alert('הדיווח נשלח בהצלחה!');
                     window.location.href = '/html/reportReceivedPage.html';
                 } else {

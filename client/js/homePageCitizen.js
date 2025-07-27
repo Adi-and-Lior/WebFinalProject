@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.warn("Element with ID 'newReportButton' not found. Cannot attach click listener.");
     }
-
     if (myReportsButton) {
         myReportsButton.addEventListener('click', () => {
             window.location.href = '../html/myReportsPage.html'; 
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.warn("Element with ID 'myReportsButton' not found. Cannot attach click listener.");
     }
-
     if (profileButton) {
         profileButton.addEventListener('click', () => {
             window.location.href = '../html/profilePage.html'; 

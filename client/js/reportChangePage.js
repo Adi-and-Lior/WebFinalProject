@@ -1,13 +1,6 @@
-/* --------------- finalReportPage.js (fixed media loading) --------------- */
-/* החלף את BASE_URL אם ה‑backend שלך רץ בכתובת אחרת                     */
-
 document.addEventListener('DOMContentLoaded', async () => {
-    /* -----------------------------------------------------
-       הגדרת כתובת בסיס אחת לכל הקריאות (API + קבצי מדיה)
-    ----------------------------------------------------- */
     const BASE_URL = 'https://webfinalproject-j4tc.onrender.com';
 
-    /* ---------- שליפת מזהה דוח מה‑URL ---------- */
     const urlParams = new URLSearchParams(window.location.search);
     const reportId  = urlParams.get('id');
 
@@ -15,21 +8,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const reportsTitleElement   = document.querySelector('.reports-title h1');
     const reportNumberDisplayElement = document.getElementById('reportNumberDisplay');
     const backButton            = document.getElementById('backButton');
-
     const displayFaultType      = document.getElementById('displayFaultType');
     const displayLocation       = document.getElementById('displayLocation');
     const displayDate           = document.getElementById('displayDate');
     const displayTime           = document.getElementById('displayTime');
     const displayDescription    = document.getElementById('displayDescription');
     const mediaContainer        = document.getElementById('mediaContainer');
-
     const editStatus            = document.getElementById('editStatus');
     const editMunicipalityResponse = document.getElementById('editMunicipalityResponse');
-
     const saveChangesButton     = document.getElementById('saveChangesButton');
     const cancelChangesButton   = document.getElementById('cancelChangesButton');
-
-    let currentReport = null;   // לשמירת הדוח הנוכחי
+    let currentReport = null; 
 
     /* ---------- מיפוי סטטוסים ---------- */
     const statusTranslations = {
@@ -81,10 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /* ---------- הצגת נתוני הדוח ---------- */
     async function populateReportData(report) {
-        /* סוג תקלה */
         displayFaultType.textContent = report.faultType || 'לא ידוע';
-
-        /* מיקום */
         let locationText = '';
         if (report.location) {
             if (report.location.city)        locationText += report.location.city;
@@ -92,8 +78,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (report.location.houseNumber) locationText += ` ${report.location.houseNumber}`;
         }
         displayLocation.textContent = locationText || 'לא הוזן מיקום';
-
-        /* תאריך ושעה */
         if (report.timestamp) {
             const date = new Date(report.timestamp);
             displayDate.textContent = date.toLocaleDateString('he-IL');
@@ -102,22 +86,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             displayDate.textContent = 'לא ידוע';
             displayTime.textContent = 'לא ידוע';
         }
-
-        /* תיאור */
         displayDescription.textContent = report.faultDescription || 'אין תיאור';
-
-        /* ----- טעינת מדיה ----- */
-        mediaContainer.innerHTML = '';           // ניקוי קודם
+        mediaContainer.innerHTML = '';
        if (report.media) {
     const mediaUrl = `${BASE_URL}/api/media/${report.media}`;
     try {
-        // בקשת HEAD לקבלת ה-Content-Type בלי להוריד את הקובץ כולו
         const headResponse = await fetch(mediaUrl, { method: 'HEAD' });
         if (!headResponse.ok) throw new Error('שגיאה בקבלת מידע על המדיה');
-
         const contentType = headResponse.headers.get('Content-Type') || '';
         console.log('Media Content-Type:', contentType);
-
         if (contentType.startsWith('image/')) {
             const img = document.createElement('img');
             img.src = mediaUrl;
@@ -142,11 +119,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 } else {
     mediaContainer.textContent = 'אין מדיה מצורפת.';
 }
-
-        /* סטטוס */
         const normalizedStatus = (report.status || '').toLowerCase().replace(/_/g, '-');
         const statusHebrew     = statusTranslations[normalizedStatus] || 'לא ידוע';
-
         const displayStatus = document.getElementById('displayStatus');
         if (displayStatus) {
             displayStatus.textContent = statusHebrew;
@@ -155,20 +129,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (normalizedStatus === 'rejected')  displayStatus.classList.add('status-rejected');
             if (normalizedStatus === 'in-progress') displayStatus.classList.add('status-in-progress');
         }
-
-        /* תגובת רשות */
         const displayMunicipalityResponse = document.getElementById('displayMunicipalityResponse');
         if (displayMunicipalityResponse) {
             displayMunicipalityResponse.textContent =
                 report.municipalityResponse || 'טרם התקבלה תגובה מהרשות המקומית.';
         }
-
-        /* שדות עריכה */
         if (editStatus)               editStatus.value               = report.status || 'in-progress';
         if (editMunicipalityResponse) editMunicipalityResponse.value = report.municipalityResponse || '';
     }
-
-    /* ---------- בדיקות ראשוניות ---------- */
     if (!reportId) {
         reportsTitleElement.textContent = 'שגיאה: ID דיווח חסר';
         console.error('Report ID is missing from the URL.');
@@ -177,16 +145,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (reportNumberDisplayElement) {
         reportNumberDisplayElement.textContent = `${reportId.slice(-4)}`;
     }
-
-    /* הרשאות עריכה */
     const user = getLoggedInUser();
     if (saveChangesButton && (!user || user.userType !== 'employee')) {
         alert('אין לך הרשאה לערוך דיווחים.');
         window.location.href = '../html/login.html';
         return;
     }
-
-    /* ---------- טעינת הדוח ---------- */
     currentReport = await fetchReportDetails(reportId);
     if (currentReport) {
         populateReportData(currentReport);
@@ -199,8 +163,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (saveChangesButton)   saveChangesButton.style.display   = 'none';
         if (cancelChangesButton) cancelChangesButton.style.display = 'none';
     }
-
-    /* ---------- אירועים ---------- */
     if (saveChangesButton) {
         saveChangesButton.addEventListener('click', async () => {
             const updatedData = {
@@ -214,7 +176,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-
     if (cancelChangesButton) {
         cancelChangesButton.addEventListener('click', () => {
             if (currentReport) populateReportData(currentReport);
@@ -222,7 +183,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.history.back();
         });
     }
-
     if (backButton) {
         backButton.addEventListener('click', () => window.history.back());
     }

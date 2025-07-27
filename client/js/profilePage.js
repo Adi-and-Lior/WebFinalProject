@@ -3,15 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const userProfileDisplay = document.getElementById('userProfileDisplay');
     const userNameDisplay = document.getElementById('userNameDisplay');
     const deleteProfileButton = document.getElementById('deleteProfileButton');
-
-    // פונקציה לעדכון טקסט הפרופיל (מחובר כ-אזרח/עובד)
     function updateUserProfileText() {
-        const userProfileType = localStorage.getItem('selectedUserType'); // קוראים את סוג הפרופיל מה-localStorage
-        console.log('User profile type from localStorage:', userProfileType); // לדיבוג
-
+        const userProfileType = localStorage.getItem('selectedUserType'); 
+        console.log('User profile type from localStorage:', userProfileType); 
         if (userProfileDisplay) {
-            let displayText = 'מחובר כ-אורח'; // ברירת מחדל אם לא נמצא פרופיל
-
+            let displayText = 'מחובר כ-אורח'; 
             if (userProfileType === 'citizen') {
                 displayText = 'מחובר כ-אזרח';
             } else if (userProfileType === 'employee') {
@@ -21,29 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // **פונקציה חדשה לעדכון שם המשתמש**
     function updateUserName() {
-        // קוראים את השם שנשמר בעמוד ההתחברות תחת המפתח 'loggedInUserName'
         const userName = localStorage.getItem('loggedInUserName');
-        console.log('User name from localStorage:', userName); // לדיבוג
-
+        console.log('User name from localStorage:', userName); 
         if (userNameDisplay) {
-            // אם יש שם, נציג אותו. אחרת, נציג 'אורח' או 'משתמש' כברירת מחדל.
             userNameDisplay.textContent = userName || 'אורח';
         }
     }
-
-    // קריאה לפונקציות בעת טעינת העמוד
     updateUserProfileText();
-    updateUserName(); // **קריאה לפונקציה החדשה בעת טעינת העמוד**
+    updateUserName(); 
 
-    // לוגיקה של כפתור ההתנתקות
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
-            // ניקוי נתוני המשתמש מ-localStorage
-            localStorage.removeItem('selectedUserType'); // מנקה את סוג הפרופיל שנשמר
+            localStorage.removeItem('selectedUserType');
             localStorage.removeItem('loggedInUserId');
-            localStorage.removeItem('loggedInUserName'); // **חשוב: מנקה גם את שם המשתמש בלחיצת התנתק**
+            localStorage.removeItem('loggedInUserName');
             window.location.href = '../index.html';
         });
     }
@@ -72,12 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (response.ok) {
                         alert('החשבון וכל הדיווחים הקשורים נמחקו בהצלחה.');
-                        // נקה את נתוני המשתמש מ-localStorage לאחר מחיקה מוצלחת
                         localStorage.removeItem('selectedUserType');
                         localStorage.removeItem('loggedInUserName');
                         localStorage.removeItem('loggedInUserId');
                         localStorage.removeItem('loggedInUserCity');
-                        window.location.href = '../index.html'; // הפנה לדף הבית
+                        window.location.href = '../index.html'; 
                     } else {
                         const errorData = await response.json();
                         alert(`שגיאה במחיקת החשבון: ${errorData.message || 'נסה שוב מאוחר יותר.'}`);

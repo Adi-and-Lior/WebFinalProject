@@ -3,16 +3,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const filterButtons = document.querySelectorAll('.filter-button');
     const sortDropdown = document.getElementById('sort-reports-dropdown');
     const backButton = document.getElementById('backButton');
-
     let allReports = [];
     let currentFilter = 'all';
     let currentSort = 'date-default';
-
     function getLoggedInUser() {
         const user = localStorage.getItem('loggedInUser');
         return user ? JSON.parse(user) : null;
     }
-
     async function fetchReports(city, status = 'all') {
         try {
             const BASE_URL = 'https://webfinalproject-j4tc.onrender.com';
@@ -29,7 +26,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return [];
         }
     }
-
     function sortReports(reportsArr) {
         const arr = [...reportsArr];
         if (currentSort === 'alphabetical') {
@@ -37,13 +33,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         return arr;
     }
-
     function createReportCard(report) { 
         const card = document.createElement('section');
         card.classList.add('report-summary-card');
-
         const displayId = report._id.slice(-4);
-
         card.innerHTML = `
             <section class="report-info">
                 <span class="report-id-word">דיווח #</span>
@@ -54,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
         return card;
     }
-
     function displayReports(reportsArr) {
         reportsDisplayArea.innerHTML = '';
         const sorted = sortReports(reportsArr);
@@ -69,12 +61,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         sorted.forEach(r => reportsDisplayArea.appendChild(createReportCard(r)));
     }
-
     async function handleFilterChange(evt) {
         filterButtons.forEach(btn => btn.classList.remove('active'));
         evt.target.classList.add('active');
         currentFilter = evt.target.dataset.filter || 'all';
-
         const user = getLoggedInUser();
         if (!user || !user.city) {
             console.error('User city missing – cannot fetch reports.');
@@ -83,25 +73,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         allReports = await fetchReports(user.city, currentFilter);
         displayReports(allReports);
     }
-
     function handleSortChange() {
         currentSort = sortDropdown.value;
         displayReports(allReports);
     }
-
     const user = getLoggedInUser();
     if (!user || user.userType !== 'employee' || !user.city) {
         alert('עליך להיות מחובר כעובד עם עיר כדי לצפות בדיווחים.');
         window.location.href = '../html/login.html';
         return;
     }
-
     allReports = await fetchReports(user.city, currentFilter);
     displayReports(allReports);
-
     filterButtons.forEach(btn => btn.addEventListener('click', handleFilterChange));
     sortDropdown.addEventListener('change', handleSortChange);
-
     if (backButton) {
         backButton.addEventListener('click', e => {
             e.preventDefault();

@@ -32,7 +32,6 @@
                     </select>
                 </section>
             </section>
-            
             <label class="form-label fault-description-label" for="fault-description">
                 תיאור תקלה:
                 <span class="optional optional-indicator"> (לא חובה)</span>
@@ -43,10 +42,8 @@
                     </span>
                     <textarea id="fault-description" name="fault-description" placeholder="" rows="4"></textarea> 
                 </section>
-            </label>
-            
+            </label>     
             <p class="description-hint">מומלץ לתאר את התקלה בצורה מורחבת. זה יעזור להבנה טובה יותר של התקלה וישפר את דרכי טיפול בה.</p>   
-            
             <label class="form-label" for="location">מיקום: <span class="required">(חובה)</span></label>
             <section class="input-container">
                 <img class="asterisk" src="../images/asterisk.svg" alt="asterisk">
@@ -59,7 +56,6 @@
                     </select>
                 </section>    
             </section>
-            
             <section id="manualAddressSection" style="display: none;">
                 <label class="form-label" for="citySelect">עיר: <span class="required">(חובה)</span></label>
                 <section class="input-container">
@@ -68,7 +64,6 @@
                     <option value="">בחר עיר</option>
                     </select>
                 </section>
-
                 <label class="form-label" for="streetSelect">רחוב: <span class="required">(חובה)</span></label>
                 <section class="input-container">
                     <img class="asterisk" src="../images/asterisk.svg" alt="asterisk">
@@ -76,14 +71,11 @@
                     <option disabled selected value="">בחר רחוב</option>
                     </select>
                 </section>
-
                 <label class="form-label" for="houseNumberInput">מספר בית: <span class="optional">(לא חובה)</span></label>
                 <section class="input-container no-asterisk-for-optional"> <input class="input-with-inside-icons" type="text" id="houseNumberInput" name="houseNumber" placeholder="מספר בית" />
                 </section>
-                
                 <p class="description-hint">נא הקלד את הכתובת המלאה של התקלה.</p>
             </section>
-
             <label for="upload" class="form-label">העלאת תמונה/סרטון: <span class="required">(חובה)</span></label>
             <section class="input-container">
                 <img class="asterisk" src="../images/asterisk.svg" alt="asterisk">
@@ -96,7 +88,6 @@
                     </select>
                 </section>
             </section>
-
             <section id="mediaUploadSection" style="display: none;">
                 <label class="form-label" for="media-file">בחירת קובץ: <span class="required">(חובה)</span></label>
                 <section class="input-container">
@@ -107,11 +98,9 @@
                 </section>
                 <p class="description-hint">בחר קובץ תמונה או וידאו.</p>
             </section>
-
             <video id="cameraPreview" autoplay playsinline></video>
             <button id="capture" type="button">צלם תמונה</button>
             <canvas id="canvas" style="display: none;"></canvas>
-
             <button class="submit-button" type="submit">שליחה</button>
         </form>
     </main>

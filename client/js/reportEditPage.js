@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const reportId = urlParams.get('id');  
-
     const reportsTitleElement = document.querySelector('.reports-title h2');
     const backArrow = document.querySelector('.back-arrow');
-
     if (!reportId) {
         reportsTitleElement.textContent = 'שגיאה: ID דיווח חסר';
         console.error('Report ID is missing from the URL.');
@@ -14,16 +12,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (reportNumberDisplayElement) {
         reportNumberDisplayElement.textContent = `${reportId.slice(-4)}`;
     }
-
     const statusTranslations = {
         'in-progress': 'בטיפול',
         'completed': 'הושלם',
         'rejected': 'נדחה',
     };
-
-    // כתובת הבסיס של השרת - החלף לפי הצורך
     const backendBaseUrl = 'https://webfinalproject-j4tc.onrender.com';
-
     try {
         const response = await fetch(`${backendBaseUrl}/api/reports/${reportId}`);
         if (!response.ok) {
@@ -32,9 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const report = await response.json();
         console.log('Report details fetched:', report);
-
         document.getElementById('displayFaultType').textContent = report.faultType || 'לא ידוע';
-
         if (report.location) {
             let locationText = '';
             if (report.location.city)        locationText += report.location.city;
@@ -44,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             document.getElementById('displayLocation').textContent = 'לא הוזן מיקום';
         }
-
         if (report.timestamp) {
             const dateObj = new Date(report.timestamp);
             document.getElementById('displayDate').textContent =
@@ -55,27 +46,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('displayDate').textContent  = 'לא ידוע';
             document.getElementById('displayTime').textContent  = 'לא ידוע';
         }
-
         document.getElementById('displayDescription').textContent =
             report.faultDescription || 'אין תיאור.';
-
         const mediaContainer = document.getElementById('mediaContainer');
-        mediaContainer.innerHTML = '';  // ניקוי לפני הוספה
-
+        mediaContainer.innerHTML = '';
         console.log('Media filename:', report.media);
         if (report.media) {
     const mediaUrl = `${backendBaseUrl}/api/media/${report.media}`;
-
     try {
-        // שולח בקשת HEAD כדי לקבל רק את הכותרות, לא את התוכן
         const headResponse = await fetch(mediaUrl, { method: 'HEAD' });
         if (!headResponse.ok) throw new Error('שגיאה בקבלת מדיה');
-
         const contentType = headResponse.headers.get('Content-Type');
         console.log('Media Content-Type:', contentType);
-
-        mediaContainer.innerHTML = ''; // ניקוי קודם
-
+        mediaContainer.innerHTML = ''; 
         if (contentType && contentType.startsWith('image/')) {
             const img = document.createElement('img');
             img.src = mediaUrl;
@@ -98,12 +81,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 } else {
     mediaContainer.textContent = 'אין מדיה מצורפת.';
 }
-
         let normalizedStatus = (report.status || '').toLowerCase().replace(/_/g, '-');
         const statusHebrew = statusTranslations[normalizedStatus] || 'לא ידוע';
         const statusElement = document.getElementById('displayStatus');
         statusElement.textContent = statusHebrew;
-
         statusElement.classList.remove('status-paid', 'status-rejected', 'status-in-progress');
         if (normalizedStatus === 'completed') {
             statusElement.classList.add('status-paid');
@@ -112,10 +93,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else if (normalizedStatus === 'in-progress') {
             statusElement.classList.add('status-in-progress');
         }
-
         document.getElementById('displayMunicipalityResponse').textContent =
             report.municipalityResponse || 'טרם התקבלה תגובה מהרשות המקומית.';
-
     } catch (error) {
         console.error('Error loading report details:', error);
         reportsTitleElement.textContent = 'שגיאה בטעינת דיווח';
@@ -125,14 +104,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 `<p style="color:red;text-align:center;">${error.message}</p>`;
         }
     }
-
     const editPageButton = document.querySelector('.footer-employee button');
     if (editPageButton) {
         editPageButton.addEventListener('click', () => {
             window.location.href = `/html/reportChangePage.html?id=${reportId}`;
         });
     }
-
     if (backArrow) {
         backArrow.addEventListener('click', evt => {
             evt.preventDefault();
