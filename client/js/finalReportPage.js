@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         'rejected'   : 'נדחה',
     };
 
-    /* ---------- API Function: fetchReportDetails ---------- */
+    /* ---------- Fetches details of a specific report from the API. ---------- */
     async function fetchReportDetails(id) {
         try {
             const response = await fetch(`${BASE_URL}/api/reports/${id}`);
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /* ---------- Function: populateReportData ---------- */
+    /* ---------- Populates the HTML elements with the fetched report data. ---------- */
     async function populateReportData(report) {
         displayFaultType.textContent = report.faultType || 'לא ידוע';
         let locationText = '';
@@ -132,7 +132,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         displayMunicipalityResponse.textContent =
             report.municipalityResponse || 'טרם התקבלה תגובה מהרשות המקומית.';
     }
-    /* ---------- Initial Load Logic ---------- */
     if (!reportId) {
         reportsTitleElement.textContent = 'שגיאה: ID דיווח חסר';
         console.error('Report ID is missing from the URL.');

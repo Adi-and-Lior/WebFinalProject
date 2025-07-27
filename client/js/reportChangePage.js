@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cancelChangesButton   = document.getElementById('cancelChangesButton');
     let currentReport = null; 
 
-    /* ---------- מיפוי סטטוסים ---------- */
+    /* ---------- Status mapping ---------- */
     const statusTranslations = {
         'in-progress': 'בטיפול',
         'completed'  : 'הושלם',
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    /* ---------- Updates an existing report in the database with the provided data ---------- */
     async function updateReport(id, updatedData) {
         try {
             const response = await fetch(`${BASE_URL}/api/reports/${id}`, {
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /* ---------- הצגת נתוני הדוח ---------- */
+    /* ---------- Viewing report data---------- */
     async function populateReportData(report) {
         displayFaultType.textContent = report.faultType || 'לא ידוע';
         let locationText = '';

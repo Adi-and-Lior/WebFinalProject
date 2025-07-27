@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const profileOptions = document.querySelectorAll('.userBlock');
     const continueButton = document.querySelector('.continue-button');
-
     let selectedProfile = null;
-
     profileOptions.forEach(option => {
         option.addEventListener('click', () => {
             profileOptions.forEach(opt => {

@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api';
     const backButton = document.querySelector('.reports-title .back-arrow').closest('a');
     const homeButton = document.querySelector('.thank-you-footer button');
-
     const displayFaultType = document.getElementById('displayFaultType');
     const displayLocation = document.getElementById('displayLocation');
     const displayDate = document.getElementById('displayDate');
@@ -58,11 +57,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.warn('לא נמצאו פרטים עבור דיווח זה.');
             return;
         }
-
         displayFaultType.textContent = report.faultType || 'לא זמין';
         displayDescription.textContent = report.faultDescription || 'אין תיאור';
-
-        // מיקום
         if (report.location) {
             if (report.location.type === 'manual') {
                 const city = report.location.city || '';
@@ -88,13 +84,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             displayLocation.textContent = 'מיקום לא ידוע';
         }
-
-        // תאריך ושעה
         const timestamp = report.timestamp ? new Date(report.timestamp) : null;
         displayDate.textContent = timestamp ? timestamp.toLocaleDateString('he-IL') : 'לא ידוע';
         displayTime.textContent = timestamp ? timestamp.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }) : 'לא ידוע';
-
-        // סטטוס
         let statusText = '';
         let statusClass = '';
         switch (report.status) {
@@ -117,15 +109,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         displayStatus.textContent = statusText;
         displayStatus.classList.add(statusClass);
-
-        // תגובת הרשות המקומית
         displayResponse.textContent = report.municipalityResponse || 'טרם התקבלה תגובה';
-
-        // מדיה
         if (report.media && report.mediaMimeType) {
             const mediaUrl = `${API_BASE_URL}/media/${report.media}`;
             const mimeType = report.mediaMimeType;
-
             let mediaElement;
             if (mimeType.startsWith('image/')) {
                 mediaElement = document.createElement('img');
@@ -138,7 +125,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mediaElement.controls = true;
                 mediaElement.classList.add('detail-media');
             }
-
             if (mediaElement) {
                 mediaContainer.innerHTML = '';
                 mediaContainer.appendChild(mediaElement);
@@ -149,7 +135,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             mediaContainer.textContent = 'אין מדיה מצורפת';
         }
     }
-
     const reportId = getUrlParameter('id');
     if (reportId) {
         const reportDetails = await fetchReportDetails(reportId);
@@ -158,19 +143,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Report ID לא נמצא ב-URL.');
         alert('שגיאה: מזהה דיווח חסר. אנא חזור לדף הדיווחים.');
     }
-
     if (backButton) {
         backButton.addEventListener('click', (event) => {
             event.preventDefault();
             window.history.back();
         });
     }
-
     if (homeButton) {
         homeButton.addEventListener('click', () => {
             window.location.href = '/html/homePageCitizen.html';
         });
     }
-
     console.log('reportingDetailsPage.js נטען במלואו.');
 });

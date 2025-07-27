@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('[INFO] DOM fully loaded');
-
     const displayFaultType = document.getElementById('displayFaultType');
     const displayLocation = document.getElementById('displayLocation');
     const displayDate = document.getElementById('displayDate');
@@ -8,10 +7,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const displayDescription = document.getElementById('displayDescription');
     const displayMedia = document.getElementById('displayMedia');
     const mediaPreview = document.getElementById('mediaPreview');
-
     const goToMyReportsBtn = document.getElementById('goToMyReportsBtn');
     const goToHomeBtn = document.getElementById('goToHomeBtn');
-
     const API_BASE_URL = 'https://webfinalproject-j4tc.onrender.com/api';
 
     async function fetchReportById(reportId) {
@@ -70,28 +67,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('[DEBUG] Parsed formatted location:', formattedLocation);
         return formattedLocation;
     }
-
     const lastReportId = localStorage.getItem('lastReportId');
     console.log('[DEBUG] Last report ID from localStorage:', lastReportId);
     let reportData = null;
-
     if (lastReportId) {
         reportData = await fetchReportById(lastReportId);
     }
-
     if (!reportData) {
         console.warn('[WARN] Report not found in server, trying localStorage fallback');
         reportData = JSON.parse(localStorage.getItem('lastReportDetails'));
         console.log('[DEBUG] Report from localStorage:', reportData);
     }
-
     if (reportData) {
         console.log('[INFO] Processing report data');
         displayFaultType.textContent = reportData.faultType || 'לא ידוע';
-
         if (reportData.location) {
             console.log('[DEBUG] Report location object:', reportData.location);
-
             if (reportData.location.type === 'manual') {
                 const city = reportData.location.city || '';
                 const street = reportData.location.street || '';
@@ -101,7 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else if (reportData.location.type === 'current') {
                 const { latitude, longitude } = reportData.location;
                 console.log('[DEBUG] Current location - lat:', latitude, 'lon:', longitude);
-
                 if (latitude != null && longitude != null) {
                     const addressData = await getAddressFromCoordinates(latitude, longitude);
                     if (addressData) {
@@ -136,21 +126,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             displayDate.textContent = 'לא ידוע';
             displayTime.textContent = 'לא ידוע';
         }
-
         displayDescription.textContent = reportData.faultDescription || 'אין תיאור';
-
         if (reportData.media && reportData.media !== 'no media') {
             const mediaUrl = `${API_BASE_URL}/media/${reportData.media}`;
             const mimeType = reportData.mediaMimeType;
-
             console.log('[DEBUG] Media ID:', reportData.mediaId);
             console.log('[DEBUG] Media URL:', mediaUrl);
             console.log('[DEBUG] Media MIME type:', mimeType);
-
             mediaPreview.src = '';
             let existingVideo = document.getElementById('reportMediaVideoPreview');
             if (existingVideo) existingVideo.remove();
-
             if (mimeType && mimeType.startsWith('image/')) {
                 mediaPreview.src = mediaUrl;
                 mediaPreview.style.display = 'block';
@@ -183,13 +168,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         displayMedia.textContent = 'אין נתונים';
         mediaPreview.style.display = 'none';
     }
-
     if (goToMyReportsBtn) {
         goToMyReportsBtn.addEventListener('click', () => {
             window.location.href = '/html/myReportsPage.html';
         });
     }
-
     if (goToHomeBtn) {
         goToHomeBtn.addEventListener('click', () => {
             window.location.href = '/html/homePageCitizen.html';
