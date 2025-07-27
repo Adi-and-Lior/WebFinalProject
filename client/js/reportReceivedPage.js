@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // פונקציה לעדכון מיקום הדיווח בשרת (הפונקציה החדשה שדיברנו עליה)
-    async function updateReportLocation(reportId, city, street, houseNumber) {
+    async function updateReportLocation(reportId, city, street, houseNumber, latitude, longitude) {
         console.log(`[DEBUG] Updating report location for ID: ${reportId} to City: ${city}, Street: ${street}, Number: ${houseNumber}`);
         try {
             const response = await fetch(`${API_BASE_URL}/reports/${reportId}/location`, {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ city, street, houseNumber })
+                body: JSON.stringify({ city, street, houseNumber, latitude, longitude })
             });
 
             if (!response.ok) {
@@ -137,15 +137,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         // ואם ה-reportId זמין
                         if (lastReportId && (!reportData.location.city || !reportData.location.street)) {
                             console.log('[INFO] Updating report location in DB based on geocoded data.');
-                            const updatedReport = await updateReportLocation(lastReportId, city, street, houseNumber);
+                            const updatedReport = await updateReportLocation(lastReportId, city, street, houseNumber,latitude, longitude);
                             if (updatedReport) {
                                 // אם העדכון הצליח, נעדכן את אובייקט reportData כדי להציג את הנתונים החדשים
                                 reportData.location.city = updatedReport.location.city;
                                 reportData.location.street = updatedReport.location.street;
-                                reportData.location.houseNumber = updatedReport.location.houseNumber;
-                                reportData.location.type = updatedReport.location.type; // יהפוך ל-'manual'
-                                reportData.location.latitude = undefined; // ננקה את הקואורדינטות כיוון שהמיקום עכשיו ידני
-                                reportData.location.longitude = undefined; // ננקה את הקואורדינטות
                             }
                         }
                         // *** סוף הקוד החדש ***

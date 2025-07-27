@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded',async () => {
     // --- Defining HTML elements ---
     const backButton = document.getElementById('backButton');
     const reportForm = document.querySelector('.report-form');
@@ -152,6 +152,35 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("loadStreetsForCity: --- FINISHED ---");
     }
 }
+async function loadFaultTypes() {
+    console.log('[INFO] Loading fault types from server...');
+    try {
+        // ביצוע בקשת GET לשרת כדי לקבל את רשימת סוגי התקלות
+        const response = await fetch(`${API_BASE_URL}/fault-types`); 
+        if (!response.ok) {
+            // אם התגובה מהשרת אינה תקינה (לדוגמה, סטטוס 404 או 500)
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to fetch fault types');
+        }
+        // המרת התשובה ל-JSON
+        const faultTypes = await response.json();
+        console.log('[DEBUG] Fault types received:', faultTypes);
+        // לולאה על כל סוג תקלה שהתקבל מהשרת ויצירת אופציה עבורו
+        faultTypes.forEach(type => {
+            const option = document.createElement('option'); // יצירת אלמנט <option>
+            option.value = type.value; // הגדרת ה-value של האופציה (לדוגמה: "בור בכביש")
+            option.textContent = type.label; // הגדרת הטקסט שיוצג למשתמש (לדוגמה: "בור בכביש")
+            faultTypeSelect.appendChild(option); // הוספת האופציה לאלמנט ה-<select>
+        });
+
+        // אתחול Select2 מחדש עבור בורר סוג התקלה
+        // חשוב לוודא ש-jQuery ו-Select2 נטענו לפני שורה זו
+        console.log('[INFO] Fault types loaded successfully.');
+    } catch (error) {
+        console.error('שגיאה בטעינת סוגי התקלות:', error);
+        alert('שגיאה בטעינת סוגי התקלות. אנא רענן את הדף או נסה שוב מאוחר יותר.');
+    }
+}
     if (loggedInUser) {
         currentUsername = loggedInUser.username;
         currentUserId = loggedInUser.userId;
@@ -161,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('שגיאה: משתמש לא מחובר. אנא התחבר שוב.');
         window.location.href = '../index.html';
     }
-
+    await loadFaultTypes();
     if (backButton) {
         backButton.addEventListener('click', (event) => {
             event.preventDefault();
@@ -464,6 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (faultTypeSelect) {
         faultTypeSelect.addEventListener('change', updateFaultDescriptionRequirement);
         updateFaultDescriptionRequirement();
+        updateStatusIcon(faultTypeSelect, faultTypeStatusIcon);
     }
     if (faultDescriptionTextarea) {
         faultDescriptionTextarea.addEventListener('input', () => {
