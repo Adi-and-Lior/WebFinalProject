@@ -25,17 +25,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // פונקציה לעדכון מיקום הדיווח בשרת (הפונקציה החדשה שדיברנו עליה)
+    async function updateReportLocation(reportId, city, street, houseNumber) {
+        console.log(`[DEBUG] Updating report location for ID: ${reportId} to City: ${city}, Street: ${street}, Number: ${houseNumber}`);
+        try {
+            const response = await fetch(`${API_BASE_URL}/reports/${reportId}/location`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ city, street, houseNumber })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'כשל בעדכון מיקום הדיווח בשרת');
+            }
+
+            const data = await response.json();
+            console.log('מיקום הדיווח עודכן בהצלחה בשרת:', data.report);
+            return data.report; // החזר את הדיווח המעודכן
+        } catch (error) {
+            console.error('שגיאה בעדכון מיקום הדיווח בשרת:', error);
+            // אין צורך להציג alert כאן, אפשר לטפל בזה במקום אחר אם צריך
+            return null;
+        }
+    }
+
     async function getAddressFromCoordinates(lat, lon) {
         console.log(`[DEBUG] Getting address from coordinates: lat=${lat}, lon=${lon}`);
         try {
             const response = await fetch(`${API_BASE_URL}/reverse-geocode?lat=${lat}&lon=${lon}`);
             console.log('[DEBUG] Reverse geocode request status:', response.status);
-            if (!response.ok) throw new Error('Failed to reverse geocode');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to reverse geocode');
+            }
             const data = await response.json();
             console.log('[DEBUG] Address data returned:', data);
             return data;
         } catch (error) {
-            console.error('שגיאה בפענוח מיקום:', error);
+            console.error('שגיאה בפענוח מיקום (reverse geocode):', error);
             return null;
         }
     }
@@ -67,6 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('[DEBUG] Parsed formatted location:', formattedLocation);
         return formattedLocation;
     }
+
     const lastReportId = localStorage.getItem('lastReportId');
     console.log('[DEBUG] Last report ID from localStorage:', lastReportId);
     let reportData = null;
@@ -78,9 +109,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         reportData = JSON.parse(localStorage.getItem('lastReportDetails'));
         console.log('[DEBUG] Report from localStorage:', reportData);
     }
+
     if (reportData) {
         console.log('[INFO] Processing report data');
         displayFaultType.textContent = reportData.faultType || 'לא ידוע';
+
         if (reportData.location) {
             console.log('[DEBUG] Report location object:', reportData.location);
             if (reportData.location.type === 'manual') {
@@ -98,6 +131,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const city = addressData.city || addressData.town || addressData.village || '';
                         const street = addressData.road || '';
                         const houseNumber = addressData.house_number || '';
+                        
+                        // *** כאן הקוד החדש שיפעיל את פונקציית העדכון בשרת ***
+                        // רק אם הדיווח לא עבר עדכון כזה בעבר (כלומר, שדות הכתובת ריקים)
+                        // ואם ה-reportId זמין
+                        if (lastReportId && (!reportData.location.city || !reportData.location.street)) {
+                            console.log('[INFO] Updating report location in DB based on geocoded data.');
+                            const updatedReport = await updateReportLocation(lastReportId, city, street, houseNumber);
+                            if (updatedReport) {
+                                // אם העדכון הצליח, נעדכן את אובייקט reportData כדי להציג את הנתונים החדשים
+                                reportData.location.city = updatedReport.location.city;
+                                reportData.location.street = updatedReport.location.street;
+                                reportData.location.houseNumber = updatedReport.location.houseNumber;
+                                reportData.location.type = updatedReport.location.type; // יהפוך ל-'manual'
+                                reportData.location.latitude = undefined; // ננקה את הקואורדינטות כיוון שהמיקום עכשיו ידני
+                                reportData.location.longitude = undefined; // ננקה את הקואורדינטות
+                            }
+                        }
+                        // *** סוף הקוד החדש ***
+
                         const formattedLocation = `${city}, ${street}${houseNumber ? ' ' + houseNumber : ''}`.trim();
                         console.log('[DEBUG] Formatted location from GPS:', formattedLocation);
                         displayLocation.textContent = formattedLocation || 'מיקום לפי GPS';
