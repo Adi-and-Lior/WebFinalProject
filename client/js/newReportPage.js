@@ -616,6 +616,37 @@ if (houseNumberInput) {
                 alert('אנא בחר אפשרות להעלאת מדיה (מצלמה או ספריית תמונות).');
                 return;
             }
+            const locationSelect = document.getElementById('location');
+            fetch('/api/enums/location-modes')
+  .then((res) => res.json())
+  .then((modes) => {
+    locationSelect.innerHTML = '<option disabled selected hidden>בחר מיקום</option>';
+    modes.forEach((mode) => {
+      const option = document.createElement('option');
+      option.value = mode.value;
+      option.textContent = mode.label;
+      locationSelect.appendChild(option);
+    });
+  })
+  .catch((err) => {
+    console.error('שגיאה בטעינת מיקומים:', err);
+  });
+  const uploadSelect = document.getElementById('upload');
+
+fetch('/api/enums/media-options')
+  .then((res) => res.json())
+  .then((options) => {
+    uploadSelect.innerHTML = '<option disabled selected hidden>בחר אפשרות</option>';
+    options.forEach((opt) => {
+      const option = document.createElement('option');
+      option.value = opt.value;
+      option.textContent = opt.label;
+      uploadSelect.appendChild(option);
+    });
+  })
+  .catch((err) => {
+    console.error('שגיאה בטעינת אפשרויות העלאה:', err);
+  });
             const formData = new FormData();
             formData.append('faultType', faultType);
             formData.append('faultDescription', faultDescription);
