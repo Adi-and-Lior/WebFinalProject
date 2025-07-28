@@ -191,9 +191,6 @@ async function loadLocationModes() {
     }
     const locationModes = await response.json();
     console.log('[DEBUG] Location modes received:', locationModes);
-
-    locationSelect.innerHTML = '<option disabled selected hidden>בחר מיקום</option>'; // אתחל את הסלקט לפני הוספת אופציות
-
     locationModes.forEach(mode => {
       const option = document.createElement('option');
       option.value = mode.value; // או בהתאם לשדות במודל שלך
@@ -218,9 +215,6 @@ async function loadMediaOptions() {
     }
     const mediaOptions = await response.json();
     console.log('[DEBUG] Media options received:', mediaOptions);
-
-    uploadSelect.innerHTML = '<option disabled selected hidden>בחר אפשרות</option>'; // אתחל את הסלקט
-
     mediaOptions.forEach(opt => {
       const option = document.createElement('option');
       option.value = opt.value;
@@ -454,6 +448,9 @@ async function loadMediaOptions() {
 }
     function updateMediaUploadVisibility() {
         const selectedUploadOption = uploadSelect.value;
+        if (!selectedUploadOption || selectedUploadOption.trim() === '') {
+        return;  // לא ממשיכים אם לא נבחר ערך אמיתי
+    }
         console.log('updateMediaUploadVisibility: Upload option selected:', selectedUploadOption);
         mediaUploadSection.style.display = 'none';
         mediaFileInput.removeAttribute('required');
@@ -672,39 +669,7 @@ if (houseNumberInput) {
                 alert('אנא בחר אפשרות להעלאת מדיה (מצלמה או ספריית תמונות).');
                 return;
             }
-            const locationSelect = document.getElementById('location');
-            fetch('/api/location-modes')
-  .then((res) => res.json())
-  .then((modes) => {
-    console.log('Modes:', modes);
-    locationSelect.innerHTML = '<option disabled selected hidden>בחר מיקום</option>';
-    modes.forEach((mode) => {
-      const option = document.createElement('option');
-      option.value = mode.value;
-      option.textContent = mode.label;
-      locationSelect.appendChild(option);
-    });
-  })
-  .catch((err) => {
-    console.error('שגיאה בטעינת מיקומים:', err);
-  });
-  const uploadSelect = document.getElementById('upload');
-
-fetch('/api/media-options')
-  .then((res) => res.json())
-  .then((options) => {
-    console.log('Media Options:', options);
-    uploadSelect.innerHTML = '<option disabled selected hidden>בחר אפשרות</option>';
-    options.forEach((opt) => {
-      const option = document.createElement('option');
-      option.value = opt.value;
-      option.textContent = opt.label;
-      uploadSelect.appendChild(option);
-    });
-  })
-  .catch((err) => {
-    console.error('שגיאה בטעינת אפשרויות העלאה:', err);
-  });
+            
             const formData = new FormData();
             formData.append('faultType', faultType);
             formData.append('faultDescription', faultDescription);
