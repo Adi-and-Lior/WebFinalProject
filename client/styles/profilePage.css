@@ -1,0 +1,74 @@
+.profile-container{
+    margin: 50px auto; /* רווח מהחלק העליון ומרכוז */
+}
+.profile-header{
+    background-color: #f8f8f8; /* רקע בהיר לכותרת */
+    padding: 30px 20px;
+    text-align: right;
+    position: relative;
+    border-bottom: 1px solid #eee;
+}
+.close-button{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 70px; /* הגדלה של כפתור X */
+    color: #666;
+    text-decoration: none;
+    line-height: 1;
+    cursor: pointer;
+}
+.user-info{
+    display: flex;
+    align-items: center;
+    gap: 20px; /* רווח בין האלמנטים */
+    direction: rtl; /* כיוון זרימה מימין לשמאל */
+}
+.user-info h1{
+    font-size: 60px; /* גודל פונט דומה ל-h3 של userBlock */
+    color: #333;
+    white-space: nowrap;
+}
+.user-info p{
+    font-size: 40px; /* גודל פונט גדול יותר לסטטוס */
+    color: #777;
+    white-space: nowrap;
+    margin-right: 20px;
+}
+.profile-options{
+  padding: 0;
+}
+.profile-options li{
+  list-style: none;
+}
+.profile-option-link, .profile-option-button{
+    display: flex;
+    justify-content: flex-end; /* יישור לימין בגלל RTL */
+    align-items: center;
+    padding: 25px 30px; /* פדינג גדול יותר כמו כפתורים אחרים */
+    text-decoration: none;
+    color: #0E4866;
+    font-size: 40px; /* גודל פונט גדול יותר */
+    background-color: transparent;
+    border: none;
+    text-align: right;
+    gap: 15px; /* רווח בין אייקון לטקסט */
+    cursor: default;
+}
+.button-text, .option-text{
+    flex-grow: 1;
+    text-align: right;
+}
+.button-icon, .option-icon{
+    font-size: 30px; /* גודל אייקון גדול יותר */
+    color: #888;
+    flex-shrink: 0;
+}
+#logoutButton:hover{
+    font-weight: bold; 
+    cursor: pointer;
+}
+#deleteProfileButton:hover{
+    font-weight: bold;
+    cursor: pointer;
+}

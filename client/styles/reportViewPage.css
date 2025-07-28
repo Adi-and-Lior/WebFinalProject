@@ -1,0 +1,91 @@
+.reports-filter-buttons-container{
+    display: flex; 
+    padding: 10px 25px; 
+    border-radius: 20px; 
+    margin: 40px 25px 20px 25px; 
+    direction: rtl; 
+    gap: 10px;
+}
+.filter-button{
+    flex-grow: 1; 
+    flex-basis: 0; 
+    padding: 12px 15px; 
+    margin: 0 5px; 
+    background-color: transparent; 
+    border: none; 
+    border-radius: 10px; 
+    font-size: 45px; 
+    font-weight: bold;
+    color: #3F98B8; 
+    cursor: pointer;  
+    background-color: #EBFFF8;
+}
+.filter-button.active{
+    color: #256586; 
+}
+.filter-button:hover{
+    transform: scale(1.1);           
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.report-summary-card{
+    display: flex; 
+    justify-content: space-between; 
+    background-color: #EBF7FB; 
+    border-radius: 10px; 
+    padding: 15px 20px; 
+    margin-bottom: 25px;
+}
+.report-info{
+  display: flex;
+  padding: 0px;
+  font-size: 40px;
+}
+.report-id-type{
+    font-weight: bold; 
+    color: #000000; 
+    white-space: nowrap; 
+    font-family: 'Heebo', sans-serif;
+    margin: 0px;
+    padding: 0px;
+}
+.report-id-word{
+    font-weight: bold; 
+    color: #000000; 
+    white-space: nowrap; 
+    font-family: 'Heebo', sans-serif;
+    margin: 0px;
+    padding: 0px;
+}
+.view-details-link{
+    font-size: 40px;
+    color: #076FCA; 
+    text-decoration: none;
+    font-weight: normal;
+    white-space: nowrap; 
+}
+.view-details-link:hover{
+  font-weight: bold;
+}
+.detail-item span.status-paid{
+    color: #388E3C;
+}
+.detail-item span.status-rejected{
+    color: #D32F2F;
+}
+.detail-item span.status-in-progress{
+    color: #2e23c2;
+}
+#editStatus{
+  font-size: 35px;
+  padding: 8px;     
+}
+#mediaContainer img{
+  width: 300px;
+}
+.detail-item textarea{
+  font-size: 35px;
+  padding: 10px; 
+  width: 100%;
+  box-sizing: border-box; 
+  resize: vertical; 
+}

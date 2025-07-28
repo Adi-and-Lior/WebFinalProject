@@ -1,0 +1,149 @@
+.app-container{
+    background-color: #EBFFF8;
+    border-radius: 50px; 
+    padding: 20px;
+    margin-bottom: 40px; 
+}
+.header-logo{
+    height: 200px; 
+    width: auto;
+    margin-right: 70px;
+}
+.back-arrow{
+    height: 100px;
+    cursor: pointer;
+}
+.report-form{
+    display: flex;
+    flex-direction: column;
+    gap: 40px; 
+}
+.frame-textarea{
+  display: flex;
+  align-items: center;
+}
+.form-label{
+    font-size: 40px;
+    font-weight: bold;
+    color: #333;
+}
+.form-label .required{
+    color: #EB5252;
+}
+.form-label .optional{
+    color: #5bc0de;
+}
+/* קונטיינר כללי לשדה + אייקון X חיצוני */
+.input-container{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+/* קונטיינר לשדה עצמו ולאייקונים הפנימיים */
+.input-with-inside-icons{
+    position: relative;
+    flex-grow: 1; 
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+.input-container input{
+  font-size: 40px;
+  height: 50px; 
+  width: 20px;
+  padding: 4px 8px;
+}
+.input-with-inside-icons .svg-icon{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 32px; 
+    padding-right: 15px;
+}
+#media-file{
+  font-size: 40px;   
+  padding-left:  800px;   
+  padding-top: 20px;
+}
+.asterisk{
+    height: 35px;
+    margin-right: 5px;
+}
+.input-with-inside-icons select{
+    width: 900px;
+    padding: 12px 65px 12px 15px; 
+    border: none;
+    background-color: transparent;
+    color: #333;
+    cursor: pointer;
+    font-size: 40px;
+}
+.input-with-inside-icons:focus-within{
+    border-color: #00BCD4; 
+}
+select{
+  outline: none;
+  box-shadow: none;
+  border: none;
+}   
+.report-form textarea{
+    margin-top: 30px;
+    margin-right: 10px;
+    padding-top: 12px;
+    padding-right: 15px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 30px;
+    color: #333;
+    outline: none;
+    box-shadow: none;
+    width: 900px;
+    height: 170px;
+}
+textarea:focus{
+    border: 1px solid #00BCD4;
+}
+.description-hint{
+    font-size: 40px;
+    color: #666;
+    margin-top: 5px;
+    line-height: 1.5;
+}
+.submit-button{
+    width: 250px;
+    height: 50px;
+    background: #41D2CF;
+    color: #266686;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 45px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;  
+    justify-content: center; 
+}
+.submit-button:hover{
+  color: #10435c;
+}
+#cameraPreview{
+    display: none; 
+    width: 100%;
+    max-width: 400px;
+    margin-top: 15px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+#capture{
+    display: none; 
+    width: 200px;
+    height: 40px;
+    font-size: 40px;
+    margin-right: 100px; 
+    cursor: pointer;
+}

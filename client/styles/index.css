@@ -1,0 +1,114 @@
+.none-header{
+  margin: 0;
+  padding: 0;
+}
+.logo{
+  margin-top: 150px;
+  margin-bottom: 90px;
+  margin-left: 20px;
+  padding: 0;
+  width: 1000px; 
+  height: 400px;
+  background-image: url("../images/Backgroung_logo.png");
+  background-size: 100% auto;  
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.index-page-text h1{
+  margin: 0;
+  padding: 0;
+  color: black;
+  font-size: 80px;
+  text-align: right;
+  direction: rtl;
+}
+.index-page-text h2{
+  font-size: 80px;
+  margin: 0;
+  padding: 0;
+  color: #256586;
+  text-align: right;
+  direction: rtl;
+  font-weight: normal;
+  margin-right: 5px;
+}
+.index-page-text{
+  margin-bottom: 100px;
+}
+.userBlock{
+  padding: 0;
+  margin-left: 25px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  width: 975px;
+  height: 150px;
+  background-color:#FFFFFF ;
+  display: flex;
+  align-items: center; 
+  text-align: right;   
+  direction: rtl; 
+  cursor: pointer;
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.4);
+}
+.userBlock img{
+  margin-right :20px;
+  margin-left: 30px;
+  width: 80px;
+}
+.userBlock h3{
+  margin-right: 20px;
+  font-size: 80px;
+  font-weight: normal;
+}
+.selection{
+  margin-top: 70px;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  margin-bottom: 150px;
+}
+.selection button{
+  width: 600px; 
+  height: 130px;
+  border-radius: 45px;
+  font-size: 60px;
+  font-weight: bold;
+  background-color: #55E8D5;
+  box-shadow: 0 8px 4px rgba(0, 0, 0, 0.4);
+  border: none;
+  cursor: pointer;
+}
+footer{
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 180px;
+}
+.icon{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 40px;
+}
+.icon img{
+    margin-bottom: 5px;
+    width: 150px;
+}
+.icon h3{
+    font-size: 40px;
+    font-weight: bold;
+    color: #0E4866;
+    margin: 0;
+    white-space: nowrap; /* מונע שבירת שורה בטקסט */
+}
+.check-icon {
+  display: none !important; 
+  height: 60px; 
+}
+.userBlock.selected .check-icon {
+  display: block !important; 
+  margin-right: 550px;
+}

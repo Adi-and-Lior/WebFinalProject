@@ -1,0 +1,132 @@
+.page-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+.thank-you-header{
+    display: block;
+    padding: 0;
+    background-image:url("../images/circle_background.png") ;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding-top: 100px;
+    padding-bottom: 30px;
+
+}
+.thank-you-header h1{
+    font-size: 100px; 
+    color: #3F98B8; 
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+    height: 120px;
+}
+.thank-you-header h2{
+    margin: 0;
+    font-size: 60px;
+    color: #256586;
+    font-weight: bold;
+    text-align: center;
+}
+.thank-you-header p{
+    margin: 0px;
+    font-size: 50px;
+    color: #256586;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 1px;
+}
+/* קונטיינר פרטי הדיווח (המלבן הלבן) */
+.report-details-container {
+    background-color: #EBFFF8;
+    border-radius: 45px;
+    padding: 20px 40px; 
+    margin-bottom: 20px;
+    width: 700px;
+}
+.app-container h2{
+    font-size: 80px;
+    margin-top: 30px;
+    margin-bottom: 0px; 
+    font-weight: bold;
+    color: #1D7B7E;
+    text-align: center;
+    padding-bottom: 20px; 
+}
+.detail-item{
+    display: flex;
+    align-items: center; 
+    margin-bottom: 5px; 
+    padding-right: 20px; 
+    padding-left: 20px; 
+    flex-wrap: wrap;
+}
+.detail-item h3{
+    color: #000000;
+    font-size: 40px;
+    font-weight: bold;
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: 10px;
+    white-space: nowrap;
+    display: inline-block;
+}
+.detail-item span{
+    color: #000000;
+    flex-grow: 1;
+    text-align: right;
+    font-size: 40px;
+    font-weight: normal;
+    white-space: normal; /* מאפשר לטקסט לרדת שורה */
+    overflow-wrap: break-word; /* מבטיח שמילים ארוכות יירדו שורה במידת הצורך */
+    display: inline;
+}
+.edit-icon{
+    height: 35px;
+    margin-right: 5px;
+}
+.uploaded-media-preview{
+    width: 200px;
+    height: auto;
+    max-width: 100%; 
+    display: block; 
+    margin: 10px auto 20px auto; 
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    object-fit: contain; 
+}
+.gray-frame{
+    border: 1px solid #ddd;
+    margin-left: 70px;
+    margin-right: 70px;
+    margin-bottom: 45px;
+    margin-top: 45px;
+    border-radius: 40px;
+}
+.thank-you-footer{
+    display: flex;
+    flex-direction: column; 
+    align-items: center;   
+    justify-content: center;
+    gap: 30px; 
+    width: 100%; 
+    max-width: 1000px; 
+    margin: 30px auto; 
+}
+.thank-you-footer button{
+    background: #41D2CF;
+    color: #266686;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    font-size: 60px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 700px; 
+    height: 140px;
+}
+.thank-you-footer button:hover{
+    color: #10435c;
+}
