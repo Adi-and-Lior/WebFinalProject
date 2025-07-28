@@ -1,3 +1,9 @@
+header{
+  display: flex;
+  margin-left: 10px;
+  padding-top: 100px;
+  align-items: center;
+}
 .app-container{
     background-color: #EBFFF8;
     border-radius: 50px; 
@@ -146,4 +152,35 @@ textarea:focus{
     font-size: 40px;
     margin-right: 100px; 
     cursor: pointer;
+}
+.select2-container {
+    width: 100% !important;
+}
+.select2-search--dropdown .select2-search__field {
+  height: 60px;         /* גובה התיבה */
+  font-size: 40px;
+}
+.select2-results__option {
+    font-size: 18px; 
+    line-height: 1.5;    
+    min-height: 40px; 
+    font-size: 30px;
+}
+.select2-container .select2-dropdown .select2-results__options {
+  max-height: 400px !important;
+  overflow-y: auto !important;
+}
+.select2-container .select2-selection--single {
+    height: 72px !important;
+    background-color: #f8f8f8 !important;
+    border: 1px solid #ddd !important;
+    border-radius: 10px !important;
+  }
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  margin-top: 25px;    
+  font-size: 35px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  margin-top: 25px;     
+  margin-left:5px;
 }

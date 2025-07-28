@@ -12,4 +12,7 @@ body{
   width: 100%;
   margin: 0 auto;
 }
-
+#map{
+    height: calc(90vh - 300px);
+    width: 100%;                            
+}

@@ -79,9 +79,10 @@
     text-align: right;
     font-size: 40px;
     font-weight: normal;
-    white-space: normal; /* מאפשר לטקסט לרדת שורה */
-    overflow-wrap: break-word; /* מבטיח שמילים ארוכות יירדו שורה במידת הצורך */
-    display: inline;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    display: block;
 }
 .edit-icon{
     height: 35px;
@@ -129,4 +130,41 @@
 }
 .thank-you-footer button:hover{
     color: #10435c;
+}
+#mediaContainer img{
+  width: 300px;
+}
+.reports-title h2{
+    width: 600px;
+    font-size: 100px;
+    color: #266686; 
+    font-weight: bold;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    margin-left: 75px;
+    padding-top:150px;
+}
+.footer-employee{
+    display: flex;             
+    align-items: center;       
+    justify-content: center; 
+    margin-bottom: 30px;
+    gap: 30px;
+}
+.footer-employee button{
+    background: #41D2CF;
+    color: #266686;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 300px;
+}
+.footer-employee button:hover{
+  color: #10435c;
 }

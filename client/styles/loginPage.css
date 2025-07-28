@@ -7,6 +7,24 @@
     align-items: center;
     margin-top: 100px;
 }
+.logo-login{
+  margin-bottom: 90px;
+  margin-left: 20px;
+  padding: 0;
+  width: 1000px; 
+  height: 400px;
+  background-image: url("../images/Backgroung_logo.png");
+  background-size: 100% auto;  
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.button{
+    margin-top: 44px;
+}
+.back-arrow{
+    height: 100px;
+    cursor: pointer;
+}
 .input-with-icon{
   position: relative;
   width: 100%;

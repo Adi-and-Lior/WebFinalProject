@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const usernameInput = document.getElementById('username');
   const passwordInput = document.getElementById('password');
   const selectedUserType = localStorage.getItem('selectedUserType');
+  const backButton = document.getElementById('backButton');
   const API_BASE_LOGIN = 'https://webfinalproject-j4tc.onrender.com/api/login';
   console.log('Selected user type on the login page:', selectedUserType);
   console.log('Login page script loaded');
@@ -11,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn("טופס התחברות לא נמצא. וודא שקיים אלמנט עם class 'login-form'.");
     return;
   }
+  if (backButton) {
+        backButton.addEventListener('click', () => window.history.back());
+    }
   loginForm.addEventListener('submit', async event => {
     console.log('Submit event triggered');
     event.preventDefault();

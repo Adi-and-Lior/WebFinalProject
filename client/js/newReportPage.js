@@ -275,7 +275,7 @@ async function loadMediaOptions() {
     }
     function updateFaultDescriptionRequirement() {
         const selectedFaultType = faultTypeSelect.value;
-        if (selectedFaultType === 'type4') {
+        if (selectedFaultType === 'אחר') {
             faultDescriptionTextarea.setAttribute('required', 'true');
             if (faultDescriptionOptionalIndicator) faultDescriptionOptionalIndicator.style.display = 'none';
             if (faultDescriptionRequiredIndicator) faultDescriptionRequiredIndicator.style.display = 'inline';
