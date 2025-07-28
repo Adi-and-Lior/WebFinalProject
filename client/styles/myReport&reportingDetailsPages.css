@@ -154,13 +154,13 @@
     font-weight: bold;
 }
 .status-paid{
-    color: #388E3C;
+    color: #388E3C !important;
 }
 .status-rejected{
-    color: #D32F2F;
+    color: #D32F2F !important;
 }
   .status-in-progress{
-    color: #2e23c2;
+    color: #2e23c2 !important;
 }
 .reports-filters-container{
     margin-bottom: 20px; 
