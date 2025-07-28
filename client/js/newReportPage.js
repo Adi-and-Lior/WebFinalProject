@@ -357,8 +357,7 @@ async function loadMediaOptions() {
                 currentLon = position.coords.longitude;
                 console.log(`getCurrentLocation: Current Location: Lat ${currentLat}, Lon ${currentLon}`);
                 try {
-                    const apiKey = 'AIzaSyBnRHLdYCyHCyCZA30LeDv468lFXEvgbvA';
-                    const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLat},${currentLon}&key=${apiKey}`);
+                    const response = await fetch(`/api/geocode?latlng=${currentLat},${currentLon}`);
                     const data = await response.json();
                     console.log("getCurrentLocation: Geocoding API response:", data);
                     if (data.status === 'OK' && data.results.length > 0) {
@@ -416,10 +415,9 @@ async function loadMediaOptions() {
     }
     async function geocodeAddress(city, street, houseNumber) {
     const address = `${houseNumber ? houseNumber + ' ' : ''}${street}, ${city}, Israel`; // בנה את הכתובת
-    const apiKey = 'AIzaSyBnRHLdYCyHCyCZA30LeDv468lFXEvgbvA'; // השתמש במפתח ה-API שלך
     console.log(`geocodeAddress: Attempting to geocode address: '${address}'`);
     try {
-        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
+        const response = await fetch(`/api/geocode?address=${encodeURIComponent(address)}`);
         const data = await response.json();
         console.log("geocodeAddress: Geocoding API response:", data);
         if (data.status === 'OK' && data.results.length > 0) {
