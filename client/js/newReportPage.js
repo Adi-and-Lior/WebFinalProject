@@ -181,6 +181,60 @@ async function loadFaultTypes() {
         alert('שגיאה בטעינת סוגי התקלות. אנא רענן את הדף או נסה שוב מאוחר יותר.');
     }
 }
+async function loadLocationModes() {
+  console.log('[INFO] Loading location modes from server...');
+  try {
+    const response = await fetch(`${API_BASE_URL}/location-modes`);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch location modes');
+    }
+    const locationModes = await response.json();
+    console.log('[DEBUG] Location modes received:', locationModes);
+
+    locationSelect.innerHTML = '<option disabled selected hidden>בחר מיקום</option>'; // אתחל את הסלקט לפני הוספת אופציות
+
+    locationModes.forEach(mode => {
+      const option = document.createElement('option');
+      option.value = mode.value; // או בהתאם לשדות במודל שלך
+      option.textContent = mode.label;
+      locationSelect.appendChild(option);
+    });
+
+    console.log('[INFO] Location modes loaded successfully.');
+  } catch (error) {
+    console.error('שגיאה בטעינת מיקומים:', error);
+    alert('שגיאה בטעינת מיקומים. אנא רענן את הדף או נסה שוב מאוחר יותר.');
+  }
+}
+
+async function loadMediaOptions() {
+  console.log('[INFO] Loading media options from server...');
+  try {
+    const response = await fetch(`${API_BASE_URL}/media-options`);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch media options');
+    }
+    const mediaOptions = await response.json();
+    console.log('[DEBUG] Media options received:', mediaOptions);
+
+    uploadSelect.innerHTML = '<option disabled selected hidden>בחר אפשרות</option>'; // אתחל את הסלקט
+
+    mediaOptions.forEach(opt => {
+      const option = document.createElement('option');
+      option.value = opt.value;
+      option.textContent = opt.label;
+      uploadSelect.appendChild(option);
+    });
+
+    console.log('[INFO] Media options loaded successfully.');
+  } catch (error) {
+    console.error('שגיאה בטעינת אפשרויות מדיה:', error);
+    alert('שגיאה בטעינת אפשרויות מדיה. אנא רענן את הדף או נסה שוב מאוחר יותר.');
+  }
+}
+
     if (loggedInUser) {
         currentUsername = loggedInUser.username;
         currentUserId = loggedInUser.userId;
@@ -191,6 +245,8 @@ async function loadFaultTypes() {
         window.location.href = '../index.html';
     }
     await loadFaultTypes();
+    await loadLocationModes();
+    await loadMediaOptions();
     if (backButton) {
         backButton.addEventListener('click', (event) => {
             event.preventDefault();
@@ -617,9 +673,10 @@ if (houseNumberInput) {
                 return;
             }
             const locationSelect = document.getElementById('location');
-            fetch('/api/enums/location-modes')
+            fetch('/api/location-modes')
   .then((res) => res.json())
   .then((modes) => {
+    console.log('Modes:', modes);
     locationSelect.innerHTML = '<option disabled selected hidden>בחר מיקום</option>';
     modes.forEach((mode) => {
       const option = document.createElement('option');
@@ -633,9 +690,10 @@ if (houseNumberInput) {
   });
   const uploadSelect = document.getElementById('upload');
 
-fetch('/api/enums/media-options')
+fetch('/api/media-options')
   .then((res) => res.json())
   .then((options) => {
+    console.log('Media Options:', options);
     uploadSelect.innerHTML = '<option disabled selected hidden>בחר אפשרות</option>';
     options.forEach((opt) => {
       const option = document.createElement('option');
