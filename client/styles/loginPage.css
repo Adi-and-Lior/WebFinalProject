@@ -1,0 +1,73 @@
+.space{
+  margin-top: 150px;
+}
+.login-form{
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    margin-top: 100px;
+}
+.input-with-icon{
+  position: relative;
+  width: 100%;
+  direction: rtl; 
+  margin-bottom: 30px;
+  margin-right: 20px;
+}
+.input-with-icon input{
+  border: 1px solid #ccc;
+  font-size: 50px;
+  border-radius: 90px;
+  padding: 0;
+  margin-left: 25px;
+  margin-top: 20px;
+  width: 915px; 
+  height: 130px;
+  text-align: right;   
+  direction: rtl; 
+  padding-right: 60px;
+  font-size: 70px;
+}
+.input-with-icon input::placeholder {
+  color: #000;
+}
+.input-icon{
+  position: absolute;
+  top: 60%;
+  margin-right: 870px;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  pointer-events: none; 
+  opacity: 0.6;
+}
+.helpers-block{
+  margin-bottom: 170px;
+}
+.helper{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    direction: rtl;
+    margin-bottom: 5px;
+    margin-right: 30px;
+}
+.helper h2{
+    margin: 0;
+    padding: 0;
+    font-size: 50px;
+    color: #256586;
+    margin-right: 20px;
+    margin-left: 10px;
+}
+.helper a{
+    color: #076FCA;
+    text-decoration: none;
+    font-size: 40px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.helper a:hover{
+    color: #065da8;
+}
