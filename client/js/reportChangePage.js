@@ -69,6 +69,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    async function loadStatusOptions() {
+    try {
+        const response = await fetch(`${BASE_URL}/api/status-options`);
+        if (!response.ok) throw new Error('שגיאה בטעינת סטטוסים מהשרת');
+
+        const statuses = await response.json();
+
+        editStatus.innerHTML = ''; // נקה את הסלקט
+
+        statuses.forEach(status => {
+            const option = document.createElement('option');
+            option.value = status.value;        // הערך הפנימי של הסטטוס (לשמירה)
+            option.textContent = status.name; // הצגה בעברית
+            editStatus.appendChild(option);
+        });
+
+        // בחר את הסטטוס הנוכחי אם הדיווח כבר נטען
+        if (currentReport && currentReport.status) {
+            editStatus.value = currentReport.status;
+        }
+
+    } catch (err) {
+        console.error('שגיאה בטעינת סטטוסים:', err);
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'שגיאה בטעינה';
+        editStatus.appendChild(option);
+    }
+}
+
     /* ---------- Viewing report data---------- */
     async function populateReportData(report) {
         displayFaultType.textContent = report.faultType || 'לא ידוע';
@@ -184,6 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentReport = await fetchReportDetails(reportId);
     if (currentReport) {
         populateReportData(currentReport);
+        await loadStatusOptions();
     } else {
         reportsTitleElement.textContent = 'שגיאה בטעינת דיווח';
         const mainContent = document.querySelector('main');
