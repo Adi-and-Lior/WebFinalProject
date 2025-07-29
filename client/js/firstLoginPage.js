@@ -75,8 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Server response:', data);
 
             if (!res.ok) {
-                alert(data.error || 'שגיאת הרשמה: אנא נסה שוב.');
-                console.error('הרשמה נכשלה מהשרת:', data.error || 'שגיאה לא ידועה');
+                alert(data.message || 'שגיאת הרשמה: אנא נסה שוב.');
+                console.error('הרשמה נכשלה מהשרת:', data.message || 'שגיאה לא ידועה');
                 return;
             }
 
