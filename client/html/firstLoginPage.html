@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="he"> <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>דיווח בטוח</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/style.css" />
+    <link rel="stylesheet" href="../styles/index.css" />
+    <link rel="stylesheet" href="../styles/loginPage.css" />
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+</head>
+<body class="Wrapper">
+    <header class="button">
+        <a id="backButton"><img class="back-arrow" src="../images/arrow_left.svg" alt="חזור"></a>
+    </header>
+    <main>
+        <section class="logo-login">
+        </section>
+        <form class="first-login-form">
+            <h2>הרשמה למערכת</h2>
+            <section class="input-with-icon">
+                <img class="input-icon" src="../images/User-icon.svg" alt="שם משתמש">
+                <input type="text" id="newUsername" name="newUsername" placeholder="שם משתמש חדש" required>
+            </section>
+            <section class="input-with-icon">
+                <img class="input-icon" src="../images/Lock_icon.svg" alt="סיסמה">
+                <input type="password" id="newPassword" name="newPassword" placeholder="סיסמה" required>
+            </section>
+            <section class="input-with-icon">
+                <img class="input-icon" src="../images/Lock_icon.svg" alt="אימות סיסמה">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="אימות סיסמה" required>
+            </section>
+            <section class="input-with-icon employee-code-section hidden">
+                <img class="input-icon" src="../images/key_icon.svg" alt="קוד עובד"> <input type="text" id="employeeAuthCode" name="employeeAuthCode" placeholder="קוד אימות עובד" >
+            </section>
+            <section class="selection">
+                <button type="submit">הירשמות</button> 
+            </section>
+        </form>
+    </main>
+    <footer>
+    </footer>
+    <script src="../js/firstLoginPage.js"></script> 
+</body>
+</html>

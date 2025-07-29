@@ -89,3 +89,7 @@
 .helper a:hover{
     color: #065da8;
 }
+.first-login-form h2{
+   font-size: 80px; 
+   margin-left: 219px;
+}
