@@ -46,7 +46,8 @@ async function loadReportsAndDisplayOnMap() {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const reportsLocations = await response.json();
+        let reportsLocations = await response.json();
+        reportsLocations = reportsLocations.filter(report => report.status === "in-progress");
         clearMarkers();
         const reportNumberDisplay = document.getElementById('reportNumberDisplay');
         if (reportNumberDisplay) {
