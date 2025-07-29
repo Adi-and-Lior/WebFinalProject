@@ -24,13 +24,15 @@
                 <img class="input-icon" src="../images/User-icon.svg" alt="שם משתמש">
                 <input type="text" id="newUsername" name="newUsername" placeholder="שם משתמש" required>
             </section>
-            <section class="input-with-icon">
-                <img class="input-icon" src="../images/Lock_icon.svg" alt="סיסמה">
+            <section class="input-with-icon password-section">
+                <img class="input-icon" src="../images/Lock_icon.svg" id="lockIconNew">
                 <input type="password" id="newPassword" name="newPassword" placeholder="סיסמה" required>
+                <img class="toggle-visibility" id="toggleNewPassword" src="../images/eye_closed.png" alt="הצג סיסמה">
             </section>
-            <section class="input-with-icon">
-                <img class="input-icon" src="../images/Lock_icon.svg" alt="אימות סיסמה">
+            <section class="input-with-icon password-section">
+                <img class="input-icon" src="../images/Lock_icon.svg" id="lockIconConfirm">
                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder="אימות סיסמה" required>
+                <img class="toggle-visibility" id="toggleConfirmPassword" src="../images/eye_closed.png" alt="הצג סיסמה">
             </section>
             <section class="input-with-icon employee-code-section hidden">
                 <img class="input-icon" src="../images/key_icon.svg" alt="קוד עובד"> <input type="text" id="employeeAuthCode" name="employeeAuthCode" placeholder="קוד אימות עובד" >

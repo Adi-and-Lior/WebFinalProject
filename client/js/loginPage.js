@@ -5,6 +5,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectedUserType = localStorage.getItem('selectedUserType');
   const backButton = document.getElementById('backButton');
   const API_BASE_LOGIN = 'https://webfinalproject-j4tc.onrender.com/api/login';
+  const togglePassword = document.getElementById('togglePassword');
+  const lockIcon = document.getElementById('lockIcon');
+  let passwordVisible = false;
+  togglePassword.addEventListener('click', () => {
+  passwordVisible = !passwordVisible;
+  passwordInput.type = passwordVisible ? 'text' : 'password';
+  togglePassword.src = passwordVisible ? '../images/eye_open.png' : '../images/eye_closed.png';
+  });
+
+  passwordInput.addEventListener('input', () => {
+  if (passwordInput.value.trim() !== '') {
+    lockIcon.style.display = 'none';
+    togglePassword.style.display = 'block';
+  } else {
+    lockIcon.style.display = 'block';
+    togglePassword.style.display = 'none';
+  }
+});
+
+// בתחילה להסתיר את כפתור העין אם אין טקסט
+togglePassword.style.display = 'none';
+
   console.log('Selected user type on the login page:', selectedUserType);
   console.log('Login page script loaded');
   console.log('loginForm:', loginForm);
