@@ -93,3 +93,6 @@
    font-size: 80px; 
    margin-left: 219px;
 }
+.employee-code-section.hidden {
+    display: none;
+}
