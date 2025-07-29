@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             if (selectedUserType.toLowerCase() === 'employee') {
-                bodyData.employeeAuthCode = employeeAuthCode;
+                bodyData.city = employeeAuthCode;
             }
 
             const res = await fetch(API_REGISTER_USER, {
